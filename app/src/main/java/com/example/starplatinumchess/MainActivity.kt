@@ -1,19 +1,21 @@
 package com.example.starplatinumchess
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportActionBar?.hide()
+        val b1 = findViewById<Button>(R.id.button)
 
+        b1.setOnClickListener{
 
-    val btn_click_me = findViewById(R.id.button) as Button
-
-        btn_click_me.setOnClickListener{
-
+            Toast.makeText(this@MainActivity,"Nischint gay", Toast.LENGTH_SHORT).show()
 
         }
 

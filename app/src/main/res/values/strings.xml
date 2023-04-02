@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">StarPlatinumChess</string>
+    <string name="title_Name">Registration</string>
+    <string name="name_txt">Name</string>
+    <string name="name_input_txt">Name</string>
+    <string name="password_txt">Password</string>
+    <string name="pass_input_txt">Name</string>
+    <string name="register_btn">Register</string>
+    <string name="email_txt">Email</string>
+    <string name="confirm_password_txt">Confirm Password</string>
 </resources>

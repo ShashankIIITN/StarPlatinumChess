@@ -4,23 +4,224 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_dynamic_secondary10"
+    android:backgroundTint="#191313"
+    android:backgroundTintMode="src_over"
+    app:layout_constrainedWidth="true"
+    app:layout_constraintWidth="wrap_content"
+    app:layout_constraintWidth_default="spread"
+    app:layout_constraintWidth_max="wrap"
+    app:layout_constraintWidth_min="wrap"
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/title_Page"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="@string/title_Name"
+        android:textColor="#FFFFFF"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:typeface="serif"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023" />
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="500sp"
+        android:layout_margin="10sp"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical"
+        app:flow_verticalGap="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_Page">
+
+        <LinearLayout
+            android:id="@+id/linearLayout_Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical"
+            app:flow_verticalGap="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_Page">
+
+            <TextView
+                android:id="@+id/TxtViewName"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:maxHeight="10sp"
+                android:text="@string/name_txt"
+                android:textAlignment="viewStart"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="None"
+                android:backgroundTint="#F9FAFA"
+                android:ems="10"
+                android:hint="@string/name_txt"
+                android:inputType="textPersonName"
+                android:maxHeight="10sp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C6C8C1C1"
+                android:textSize="25sp"
+                tools:ignore="LabelFor,VisualLintTextFieldSize" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_Email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical"
+            app:flow_verticalGap="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_Page">
+
+            <TextView
+                android:id="@+id/TxtViewEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:maxHeight="10sp"
+                android:text="@string/email_txt"
+                android:textAlignment="viewStart"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="None"
+                android:backgroundTint="#F9FAFA"
+                android:ems="10"
+                android:hint="@string/email_txt"
+                android:inputType="textPersonName"
+                android:maxHeight="10sp"
+                android:textColor="#ffffff"
+                android:textColorHint="#C6C8C1C1"
+                android:textSize="25sp"
+                tools:ignore="LabelFor,TextFields,VisualLintTextFieldSize" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_Pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical"
+            app:flow_verticalGap="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_Page">
+
+            <TextView
+                android:id="@+id/TxtViewPass"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:maxHeight="10sp"
+                android:text="@string/password_txt"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/editTextPassword2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="None"
+                android:backgroundTint="#F9FAFA"
+                android:hint="@string/password_txt"
+                android:inputType="textPassword"
+                android:maxHeight="10sp"
+                android:textColor="#EFEEEE"
+                android:textColorHint="#C6C8C1C1"
+                android:textSize="25sp"
+                tools:ignore="LabelFor,VisualLintTextFieldSize,DuplicateSpeakableTextCheck" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_Cnf_Pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical"
+            app:flow_verticalGap="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_Page">
+
+            <TextView
+                android:id="@+id/txtViewPass"
+                android:layout_width="match_parent"
+                android:layout_height="33dp"
+                android:maxHeight="10sp"
+                android:text="@string/confirm_password_txt"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="None"
+                android:backgroundTint="#F9FAFA"
+                android:ems="10"
+                android:hint="@string/confirm_password_txt"
+                android:inputType="textPassword"
+                android:maxHeight="10sp"
+                android:textColor="#EFEEEE"
+                android:textColorHint="#C6C8C1C1"
+                android:textSize="25sp"
+                tools:ignore="LabelFor,VisualLintTextFieldSize,DuplicateSpeakableTextCheck" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="150dp"
-        tools:layout_editor_absoluteY="428dp" />
+        android:layout_width="251dp"
+        android:layout_height="72dp"
+        android:background="#C4BDB9B9"
+        android:backgroundTint="#79E6D9D9"
+        android:backgroundTintMode="add"
+        android:hapticFeedbackEnabled="false"
+        android:text="@string/register_btn"
+        android:textColor="#121010"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.253"
+        app:rippleColor="#504E4E" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
