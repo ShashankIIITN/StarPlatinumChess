@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "638747681443",
+    "project_id": "starplatinumchess-2d847",
+    "storage_bucket": "starplatinumchess-2d847.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638747681443:android:7c2b25e05cd91d6daf5516",
+        "android_client_info": {
+          "package_name": "com.example.starplatinumchess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "638747681443-1q20223l1nqthecbnc0ctcqc8bvssmsh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMYMRSDJHAej7Dt7REYLdAxHn06GFJzrw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "638747681443-1q20223l1nqthecbnc0ctcqc8bvssmsh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
