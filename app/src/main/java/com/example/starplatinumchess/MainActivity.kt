@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         auth = Firebase.auth
         database = Firebase.database.reference
         ProgressBar = findViewById(R.id.progressBar)
-        ProgressBar.visibility = View.INVISIBLE
+
 
 
         aldLoginbtn.setOnClickListener {
@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onStart() {
         super.onStart()
+        ProgressBar.visibility = View.INVISIBLE
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser != null) {

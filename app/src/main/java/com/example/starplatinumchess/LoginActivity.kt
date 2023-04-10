@@ -40,12 +40,13 @@ class LoginActivity : AppCompatActivity() {
 
         etEmail = findViewById<EditText>(R.id.etext_email)
         etPass = findViewById<EditText>(R.id.etext_pass)
-        Email = etEmail.text.toString()
-        Pass = etPass.text.toString()
+
         lginBtn = findViewById<Button>(R.id.lginbtn)
         ProgressBar = findViewById(R.id.progressBar2)
 
         lginBtn.setOnClickListener {
+            Email = etEmail.text.toString()
+            Pass = etPass.text.toString()
             ProgressBar.visibility = View.VISIBLE
             etEmail.focusable = View.NOT_FOCUSABLE
             etPass.focusable = View.NOT_FOCUSABLE
@@ -59,6 +60,11 @@ class LoginActivity : AppCompatActivity() {
                 Login()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ProgressBar.visibility = View.INVISIBLE
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
