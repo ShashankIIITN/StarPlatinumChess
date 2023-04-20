@@ -8,7 +8,11 @@ import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
@@ -20,7 +24,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class MainActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private lateinit var etEmail: EditText
     private lateinit var etUsrName: EditText
@@ -34,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_register)
         //supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         supportActionBar?.hide()
         etEmail = findViewById(R.id.editTextEmail)
@@ -51,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         aldLoginbtn.setOnClickListener {
             aldLoginbtn.setTextColor(Color.parseColor("#000075"))
-            intent = Intent(this@MainActivity, LoginActivity::class.java)
+            intent = Intent(this@RegisterActivity, LoginActivity::class.java)
             startActivity(intent)
         }
         signUpBtn.setOnClickListener {
@@ -60,7 +64,6 @@ class MainActivity : AppCompatActivity() {
             val pass = etPass.text.toString()
             val CnfPass = etCnfPass.text.toString()
             val usrName = etUsrName.text.toString()
-            //Example of functions that can be used for validation no need for lengthy way
             if (TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Toast.makeText(this, "Please Enter a Valid Email Address", Toast.LENGTH_SHORT)
                     .show()
@@ -80,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            Toast.makeText(this@MainActivity, "Already Logged in $currentUser", Toast.LENGTH_SHORT)
+            Toast.makeText(this@RegisterActivity, "Already Logged in $currentUser", Toast.LENGTH_SHORT)
                 .show()
             intent = Intent(this, MainMenu::class.java)
             intent.putExtra("User", "Myname");
@@ -109,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
                     Log.w(ContentValues.TAG, "Email Already in Use ", task.exception)
                     Toast.makeText(
-                        this@MainActivity, "Email Already in Use..", Toast.LENGTH_SHORT
+                        this@RegisterActivity, "Email Already in Use..", Toast.LENGTH_SHORT
                     ).show()
                 } else if (task.exception is FirebaseNetworkException) {
 
@@ -119,7 +122,7 @@ class MainActivity : AppCompatActivity() {
                         task.exception
                     )
                     Toast.makeText(
-                        this@MainActivity,
+                        this@RegisterActivity,
                         "Connection Error: Please Check your Internet connection and try Again..",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -131,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                         task.exception
                     )
                     Toast.makeText(
-                        this@MainActivity,
+                        this@RegisterActivity,
                         "Your Password is Too Weak Please Change it and try again ..",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -144,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                         task.exception
                     )
                     Toast.makeText(
-                        this@MainActivity,
+                        this@RegisterActivity,
                         "Incorrect Email : Please Use another Email to Signup  ..",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -166,7 +169,7 @@ class MainActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
 
-            Toast.makeText(this@MainActivity, "Successfully Registered !!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, "Successfully Registered !!", Toast.LENGTH_SHORT).show()
 
         }
 

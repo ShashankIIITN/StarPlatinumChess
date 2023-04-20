@@ -1,8 +1,10 @@
 package com.example.starplatinumchess
 
-import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,18 +19,23 @@ class MainMenu : AppCompatActivity() {
 
     private var usrName: String? = null
     private var usrEmail: String? = null
-    private var Points: Int = 0;
+    private var points: Int = 0;
     private lateinit var auth: FirebaseAuth
     private lateinit var userID: String
     private lateinit var user: FirebaseUser
     private lateinit var database: DatabaseReference
     private lateinit var txtVwpts: TextView
     private lateinit var txtVwusr: TextView
+    private lateinit var Progressbar :ProgressBar;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
+
+        Progressbar = findViewById(R.id.FetchPBar)
+
+        Progressbar.visibility = View.INVISIBLE
 
         database = Firebase.database.reference
         auth = Firebase.auth
@@ -39,6 +46,17 @@ class MainMenu : AppCompatActivity() {
 
         txtVwusr = findViewById(R.id.text_User)
         txtVwpts = findViewById(R.id.text_Points)
+
+        findViewById<Button>(R.id.with_frnds_btn).setOnClickListener{
+            val  intent = Intent(this@MainMenu, MultMainActivity::class.java)
+            intent.putExtra("UserName", usrName)
+            intent.putExtra("UserPoints", points)
+
+            Toast.makeText(this , "usrname $usrName points  $points", Toast.LENGTH_SHORT).show()
+            startActivity(intent)
+        }
+
+
         //auth = Firebase.auth
 
         //val intent = intent
@@ -49,16 +67,17 @@ class MainMenu : AppCompatActivity() {
 //
         //txtVwpts.setText(Points.toString())
 
-
-        Log.d(TAG, "$Points")
     }
 
     override fun onStart() {
         super.onStart()
         retrieveData();
+
     }
 
     private fun retrieveData() {
+        Progressbar.visibility = View.VISIBLE
+
 
         database.child("Users").child(userID).get().addOnFailureListener {
             Toast.makeText(this, "Failed to retrieve data", Toast.LENGTH_SHORT).show()
@@ -67,10 +86,11 @@ class MainMenu : AppCompatActivity() {
             //var index = data.indexOf(',')
 
             usrName = data?.userName
-            Points = data?.points.toString().toInt()
+            points = data?.points.toString().toInt()
 
             txtVwusr.text = usrName.toString()
-            txtVwpts.text = Points.toString()
+            txtVwpts.text = points.toString()
+            Progressbar.visibility = View.INVISIBLE
         }
     }
 
