@@ -3,12 +3,16 @@ package com.example.starplatinumchess
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -17,6 +21,11 @@ import androidx.annotation.CallSuper
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.DataBindingUtil
+import com.example.starplatinumchess.databinding.ActivityMainMultBinding
+import com.example.starplatinumchess.game.Chessboard
+import com.example.starplatinumchess.game.gameChoice
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionInfo
@@ -30,34 +39,54 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers.Main
 import java.util.Random
 import kotlin.text.Charsets.UTF_8
 
-private enum class GameChoice {
+
+const val empty = android.R.color.transparent
+
+var Black: Boolean = false;
+
+
+enum class GameChoice {
     ROCK, PAPER, SCISSORS;
 
     fun beats(other: GameChoice): Boolean =
-        (this == ROCK && other == SCISSORS)
-                || (this == SCISSORS && other == PAPER)
-                || (this == PAPER && other == ROCK)
+        (this == ROCK && other == SCISSORS) || (this == SCISSORS && other == PAPER) || (this == PAPER && other == ROCK)
 }
 
+var OpChoice: gameChoice? = null
+
+
+typealias Array2D<T> = Array<Array<T>>
+
+var opponentEndpointId: String? = null
+var opponentName: String? = null
+var opponentChoice: GameChoice? = null
+lateinit var connectionsClient: ConnectionsClient
+lateinit var cntxt: Context
+lateinit var chessboard: Chessboard
+
 class MultMainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainMultBinding
+
+
     var endPoints = arrayOf<String>()
     val map = mutableMapOf<String, String>()
     var sentReq = false;
-    private var  usrName : String? = null
-    private var  usrPoints : Int = 0
+    private var usrName: String? = null
+    private var usrPoints: Int = 0
+
 
     private val STRATEGY = Strategy.P2P_STAR
-    private lateinit var connectionsClient: ConnectionsClient
+
     private val REQUEST_CODE_REQUIRED_PERMISSIONS = 1
-    private var opponentName: String? = null
-    private var opponentEndpointId: String? = null
+
     private var opponentScore = 0
-    private var opponentChoice: GameChoice? = null
-    private  var myCodeName: String = CodenameGenerator.generate()
+
+    private var myCodeName: String = CodenameGenerator.generate()
     private var myScore = 0
     private var myChoice: GameChoice? = null
 
@@ -67,6 +96,9 @@ class MultMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_mult)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main_mult)
+        //GameStart()
+        cntxt = this;
 
 
         usrName = intent.getStringExtra("UserName")
@@ -95,9 +127,7 @@ class MultMainActivity : AppCompatActivity() {
                         opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
                         resetGame()
                         Toast.makeText(
-                            applicationContext,
-                            "Disconnected Successfully",
-                            Toast.LENGTH_LONG
+                            applicationContext, "Disconnected Successfully", Toast.LENGTH_LONG
                         ).show()
                     }
                     builder.setNegativeButton("No") { dialogInterface, which ->
@@ -119,17 +149,25 @@ class MultMainActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.status).text = "Searching for opponents..."
 
             findViewById<AppCompatButton>(R.id.findOpponent).visibility = View.GONE
+
+//            findViewById<ConstraintLayout>(R.id.conLayout_1).visibility = View.VISIBLE
+//            findViewById<ConstraintLayout>(R.id.conLayout_1).rotation = 180F
+//
+//
+//            GameStart()
+
+
 //            findViewById<AppCompatButton>(R.id.disconnect).visibility = View.VISIBLE
         }
-        Main.apply {
-            findViewById<AppCompatButton>(R.id.rock).setOnClickListener { sendGameChoice(GameChoice.ROCK) }
-            findViewById<AppCompatButton>(R.id.paper).setOnClickListener { sendGameChoice(GameChoice.PAPER) }
-            findViewById<AppCompatButton>(R.id.scissors).setOnClickListener {
-                sendGameChoice(
-                    GameChoice.SCISSORS
-                )
-            }
-        }
+//        Main.apply {
+//            findViewById<AppCompatButton>(R.id.rock).setOnClickListener { sendGameChoice(GameChoice.ROCK) }
+//            findViewById<AppCompatButton>(R.id.paper).setOnClickListener { sendGameChoice(GameChoice.PAPER) }
+//            findViewById<AppCompatButton>(R.id.scissors).setOnClickListener {
+//                sendGameChoice(
+//                    GameChoice.SCISSORS
+//                )
+//            }
+//        }
 //        findViewById<AppCompatButton>(R.id.disconnect).setOnClickListener {
 //        }
 
@@ -143,8 +181,7 @@ class MultMainActivity : AppCompatActivity() {
 
         if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                 android.Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-            ||checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
+            ) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
                 android.Manifest.permission.BLUETOOTH_CONNECT
             ) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -152,11 +189,12 @@ class MultMainActivity : AppCompatActivity() {
                 arrayOf(
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.BLUETOOTH_SCAN,
-                    android.Manifest.permission.BLUETOOTH_ADVERTISE, android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                    android.Manifest.permission.BLUETOOTH_CONNECT
+                    android.Manifest.permission.BLUETOOTH_ADVERTISE,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.BLUETOOTH_CONNECT,
+                    android.Manifest.permission.NEARBY_WIFI_DEVICES
 
-                ),
-                REQUEST_CODE_REQUIRED_PERMISSIONS
+                ), REQUEST_CODE_REQUIRED_PERMISSIONS
             )
         }
         if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
@@ -174,9 +212,7 @@ class MultMainActivity : AppCompatActivity() {
 
     @CallSuper
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val errMsg = "Cannot start without required permissions"
@@ -192,13 +228,28 @@ class MultMainActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendGameChoice(choice: GameChoice) {
-        myChoice = choice
+//     fun sendGameChoice(choice: GameChoice) {
+//        myChoice = choice
+//        connectionsClient.sendPayload(
+//            opponentEndpointId!!,
+//            Payload.fromBytes(choice.name.toByteArray(UTF_8))
+//        )
+//        findViewById<TextView>(R.id.status).text = "You chose ${choice.name}"
+//
+//        setGameControllerEnabled(false)
+//    }
+
+    fun sendGameChoice(iprev:Int, jprev:Int, i: Int, j: Int) {
+
+        val gson = Gson()
+//        val gameCh = gson.toJson(gameChoice(selected, i, j))
+        val gameCh = gson.toJson(gameChoice(iprev, jprev, i, j))
+//        val gamech1 = gameChoice(selected, i, j)
+
         connectionsClient.sendPayload(
-            opponentEndpointId!!,
-            Payload.fromBytes(choice.name.toByteArray(UTF_8))
+            opponentEndpointId!!, Payload.fromBytes(gameCh.toByteArray(UTF_8))
         )
-        findViewById<TextView>(R.id.status).text = "You chose ${choice.name}"
+//        findViewById<TextView>(R.id.status).text = "You chose ${choice.name}"
 
         setGameControllerEnabled(false)
     }
@@ -212,38 +263,66 @@ class MultMainActivity : AppCompatActivity() {
     }
 
     private val payloadCallback: PayloadCallback = object : PayloadCallback() {
+        lateinit var opData: String;
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             payload.asBytes()?.let {
-                opponentChoice = GameChoice.valueOf(String(it, UTF_8))
+                opData = String(it, UTF_8)
             }
+
+            val gson = Gson()
+////
+            OpChoice = gson.fromJson(opData, gameChoice::class.java)
+            Log.i("Main", OpChoice.toString() + "sadasfasf")
+
+            Toast.makeText(
+                baseContext,
+                "i: ${OpChoice!!.i} j: ${OpChoice!!.j}",
+                Toast.LENGTH_SHORT
+            ).show()
+
+//                chessboard.onCellSelected(Pair(OpChoice!!.i, OpChoice!!.j), OpChoice!!.selected)
+            chessboard.makeMove(OpChoice!!.iprev, OpChoice!!.jprev, OpChoice!!.i, OpChoice!!.j)
+
         }
 
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
-            if (update.status == PayloadTransferUpdate.Status.SUCCESS
-                && myChoice != null && opponentChoice != null
-            ) {
-                val mc = myChoice!!
-                val oc = opponentChoice!!
-                when {
-                    mc.beats(oc) -> {
-                        findViewById<TextView>(R.id.status).text = "${mc.name} beats ${oc.name}"
-                        myScore++
-                    }
-
-                    mc == oc -> {
-                        findViewById<TextView>(R.id.status).text = "You both chose ${mc.name}"
-                    }
-
-                    else -> {
-                        findViewById<TextView>(R.id.status).text = "${mc.name} loses to ${oc.name}"
-                        opponentScore++
-                    }
-                }
-                findViewById<TextView>(R.id.score).text = "$myScore : $opponentScore"
-                myChoice = null
-                opponentChoice = null
-                setGameControllerEnabled(true)
-            }
+//            if (update.status == PayloadTransferUpdate.Status.SUCCESS && OpChoice != null) {
+////                Toast.makeText(
+////                    baseContext,
+////                    "${OpChoice!!.selected} i: ${OpChoice!!.i} j: ${OpChoice!!.j}",
+////                    Toast.LENGTH_SHORT
+////                ).show()
+////                Toast.makeText(
+////                    baseContext,
+////                    "i: ${OpChoice!!.i} j: ${OpChoice!!.j}",
+////                    Toast.LENGTH_SHORT
+////                ).show()
+////
+//////                chessboard.onCellSelected(Pair(OpChoice!!.i, OpChoice!!.j), OpChoice!!.selected)
+////                chessboard.makeMove(OpChoice!!.iprev, OpChoice!!.jprev, OpChoice!!.i, OpChoice!!.j)
+//
+////                val mc = myChoice!!
+////                val oc = opponentChoice!!
+////                when {
+////                    mc.beats(oc) -> {
+////                        findViewById<TextView>(R.id.status).text = "${mc.name} beats ${oc.name}"
+////                        myScore++
+////                    }
+////
+////                    mc == oc -> {
+////                        findViewById<TextView>(R.id.status).text = "You both chose ${mc.name}"
+////                    }
+////
+////                    else -> {
+////                        findViewById<TextView>(R.id.status).text = "${mc.name} loses to ${oc.name}"
+////                        opponentScore++
+////                    }
+////                }
+////                findViewById<TextView>(R.id.score).text = "$myScore : $opponentScore"
+//                myChoice = null
+//                opponentChoice = null
+//                setGameControllerEnabled(true)
+//            }
         }
     }
 
@@ -252,9 +331,20 @@ class MultMainActivity : AppCompatActivity() {
             "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Purple", "Lavender"
         )
         private val TREATS = arrayOf(
-            "Cupcake", "Donut", "Eclair", "Froyo", "Gingerbread", "Honeycomb",
-            "Ice Cream Sandwich", "Jellybean", "Kit Kat", "Lollipop", "Marshmallow", "Nougat",
-            "Oreo", "Pie"
+            "Cupcake",
+            "Donut",
+            "Eclair",
+            "Froyo",
+            "Gingerbread",
+            "Honeycomb",
+            "Ice Cream Sandwich",
+            "Jellybean",
+            "Kit Kat",
+            "Lollipop",
+            "Marshmallow",
+            "Nougat",
+            "Oreo",
+            "Pie"
         )
         private val generator = Random()
 
@@ -275,9 +365,7 @@ class MultMainActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         myDialog.dismiss()
                         Toast.makeText(
-                            applicationContext,
-                            "Accepted Successfully",
-                            Toast.LENGTH_LONG
+                            applicationContext, "Accepted Successfully", Toast.LENGTH_LONG
                         ).show()
                     }.addOnFailureListener {
                         Toast.makeText(baseContext, it.message, Toast.LENGTH_SHORT).show()
@@ -295,14 +383,13 @@ class MultMainActivity : AppCompatActivity() {
                         .addOnSuccessListener {
                             myDialog.dismiss()
                             Toast.makeText(
-                                applicationContext,
-                                "Accepted Successfully",
-                                Toast.LENGTH_LONG
+                                applicationContext, "Accepted Successfully", Toast.LENGTH_LONG
                             ).show()
                         }.addOnFailureListener {
                             Toast.makeText(baseContext, it.message, Toast.LENGTH_SHORT).show()
                         }
                     opponentName = "Opponent\n(${info.endpointName})"
+                    Black = true
                 }
                 builder.setNegativeButton("No") { dialogInterface, which ->
                     connectionsClient.rejectConnection(endpointId)
@@ -328,14 +415,19 @@ class MultMainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.opponentName).text = opponentName
                 findViewById<TextView>(R.id.status).text = "Connected"
                 setGameControllerEnabled(true)
+                findViewById<ConstraintLayout>(R.id.conLayout_1).visibility = View.VISIBLE
+
+                if (Black) {
+                    findViewById<ConstraintLayout>(R.id.conLayout_1).rotation = 180F
+                }
+
+                GameStart()
             } else {
                 connectionsClient.stopAdvertising()
                 connectionsClient.stopDiscovery()
 
                 Toast.makeText(
-                    baseContext,
-                    result.status.statusMessage.toString(),
-                    Toast.LENGTH_SHORT
+                    baseContext, result.status.statusMessage.toString(), Toast.LENGTH_SHORT
                 ).show();
             }
         }
@@ -357,6 +449,7 @@ class MultMainActivity : AppCompatActivity() {
 
 //        findViewById<AppCompatButton>(R.id.disconnect).visibility = View.GONE
         findViewById<AppCompatButton>(R.id.findOpponent).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.conLayout_1).visibility = View.GONE
         setGameControllerEnabled(false)
         findViewById<TextView>(R.id.opponentName).text = "opponent\n(none yet)"
         findViewById<TextView>(R.id.status).text = "..."
@@ -367,10 +460,7 @@ class MultMainActivity : AppCompatActivity() {
 
         val options = AdvertisingOptions.Builder().setStrategy(STRATEGY).build()
         connectionsClient.startAdvertising(
-            myCodeName,
-            packageName,
-            connectionLifecycleCallback,
-            options
+            myCodeName, packageName, connectionLifecycleCallback, options
         ).addOnSuccessListener {
             Toast.makeText(this, "Started Advertising", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener {
@@ -459,6 +549,41 @@ class MultMainActivity : AppCompatActivity() {
         }
         myDialog.show()
 
+    }
+
+    private fun GameStart() {
+
+        val tempGrid = Array2D<ImageView?>(8) {
+            Array(8) { null }
+        }
+        tempGrid[0][0] = binding.sampleCell
+        if (Black) {
+            tempGrid[0][0]?.rotation = 180f
+        }
+        for (j in 1 until 8) {
+            val cell = ImageView(this)
+            cell.layoutParams = binding.sampleCell.layoutParams
+            if (Black) {
+                cell.rotation = 180f
+            }
+            binding.sampleRow.addView(cell)
+            tempGrid[0][j] = cell
+        }
+        for (i in 1 until 8) {
+            val row = LinearLayout(this)
+            row.layoutParams = binding.sampleRow.layoutParams
+            for (j in 0 until 8) {
+                val cell = ImageView(this)
+                if (Black) {
+                    cell.rotation = 180f
+                }
+                cell.layoutParams = binding.sampleCell.layoutParams
+                row.addView(cell)
+                tempGrid[i][j] = cell
+            }
+            binding.chessboard.addView(row)
+        }
+        chessboard = Chessboard(tempGrid)
     }
 
 }
