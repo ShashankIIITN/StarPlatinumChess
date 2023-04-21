@@ -50,12 +50,12 @@ const val empty = android.R.color.transparent
 var Black: Boolean = false;
 
 
-enum class GameChoice {
-    ROCK, PAPER, SCISSORS;
-
-    fun beats(other: GameChoice): Boolean =
-        (this == ROCK && other == SCISSORS) || (this == SCISSORS && other == PAPER) || (this == PAPER && other == ROCK)
-}
+//enum class GameChoice {
+//    ROCK, PAPER, SCISSORS;
+//
+//    fun beats(other: GameChoice): Boolean =
+//        (this == ROCK && other == SCISSORS) || (this == SCISSORS && other == PAPER) || (this == PAPER && other == ROCK)
+//}
 
 var OpChoice: gameChoice? = null
 
@@ -64,7 +64,7 @@ typealias Array2D<T> = Array<Array<T>>
 
 var opponentEndpointId: String? = null
 var opponentName: String? = null
-var opponentChoice: GameChoice? = null
+//var opponentChoice: GameChoice? = null
 lateinit var connectionsClient: ConnectionsClient
 lateinit var cntxt: Context
 lateinit var chessboard: Chessboard
@@ -88,7 +88,7 @@ class MultMainActivity : AppCompatActivity() {
 
     private var myCodeName: String = CodenameGenerator.generate()
     private var myScore = 0
-    private var myChoice: GameChoice? = null
+//    private var myChoice: GameChoice? = null
 
     private lateinit var myDialog: Dialog
 
@@ -113,7 +113,16 @@ class MultMainActivity : AppCompatActivity() {
             override fun handleOnBackPressed() {
 
                 if (opponentEndpointId.isNullOrBlank()) {
-                    finish()
+
+                    if (findViewById<Button>(R.id.findOpponent).visibility.equals(View.VISIBLE)) {
+                        finish()
+                    }else{
+
+                        connectionsClient.stopAdvertising()
+                        connectionsClient.stopDiscovery()
+                        findViewById<Button>(R.id.findOpponent).visibility = View.VISIBLE
+                        findViewById<TextView>(R.id.status).visibility = View.GONE
+                    }
                 } else {
                     val builder = AlertDialog.Builder(this@MultMainActivity)
                     builder.setTitle("Disconnect!!")
@@ -147,6 +156,7 @@ class MultMainActivity : AppCompatActivity() {
             startDiscovery()
 
             findViewById<TextView>(R.id.status).text = "Searching for opponents..."
+            findViewById<TextView>(R.id.status).visibility = View.VISIBLE
 
             findViewById<AppCompatButton>(R.id.findOpponent).visibility = View.GONE
 
@@ -239,7 +249,7 @@ class MultMainActivity : AppCompatActivity() {
 //        setGameControllerEnabled(false)
 //    }
 
-    fun sendGameChoice(iprev:Int, jprev:Int, i: Int, j: Int) {
+    fun sendGameChoice(iprev: Int, jprev: Int, i: Int, j: Int) {
 
         val gson = Gson()
 //        val gameCh = gson.toJson(gameChoice(selected, i, j))
@@ -249,7 +259,6 @@ class MultMainActivity : AppCompatActivity() {
         connectionsClient.sendPayload(
             opponentEndpointId!!, Payload.fromBytes(gameCh.toByteArray(UTF_8))
         )
-//        findViewById<TextView>(R.id.status).text = "You chose ${choice.name}"
 
         setGameControllerEnabled(false)
     }
@@ -441,9 +450,9 @@ class MultMainActivity : AppCompatActivity() {
 
         opponentEndpointId = null
         opponentName = null
-        opponentChoice = null
+//        opponentChoice = null
         opponentScore = 0
-        myChoice = null
+//        myChoice = null
         myScore = 0
         sentReq = false
 

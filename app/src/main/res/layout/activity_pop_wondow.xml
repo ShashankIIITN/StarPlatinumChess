@@ -11,14 +11,14 @@
 
     <TextView
         android:id="@+id/txtclose"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="39dp"
+        android:layout_height="34dp"
         android:layout_gravity="end"
         android:background="@android:color/darker_gray"
         android:gravity="center"
         android:text="X"
 
-        android:textColor="@color/white"
+        android:textColor="#455A64"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,13 +29,17 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="207dp"
-        android:layout_height="47dp"
+        android:layout_width="250dp"
+        android:layout_height="58dp"
         android:layout_marginTop="8dp"
+        android:background="#B6ADAD"
+        android:backgroundTint="#FDF9F9"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.474" />
 
     <Button
         android:id="@+id/connext_btn"

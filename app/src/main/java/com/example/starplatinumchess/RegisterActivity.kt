@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -36,6 +35,131 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var ProgressBar: ProgressBar
 
 
+    fun validate(): Boolean
+    {
+        val username= findViewById<EditText>(R.id.editTextUsrName)
+        val Email =findViewById<EditText>(R.id.editTextEmail)
+        val passw =findViewById<EditText>(R.id.editTextPass)
+        val conpass =findViewById<EditText>(R.id.editTextCnfPass)
+        val pHone =findViewById<EditText>(R.id.editTextPhone)
+
+        val uname = username.text.toString()
+        val email= Email.text.toString()
+        val pass = passw.text.toString()
+        val cpass = conpass.text.toString()
+        val phone = pHone.text.toString()
+
+        var user=false
+        var mail=false
+        var pas =false
+        var conpas =false
+        var pho= false
+
+
+        //gender.error=if (gender.checkedRadioButtonId == -1)"Please select your gender" else null
+
+
+//        if(uname.isEmpty())
+//        {
+//            umane.getError("Username can not be empty")
+//        }
+//        username.validate("Username can not be empty") {uname->uname.length>0}
+
+
+//        else if(uname.length<4)
+//        {
+//            uname.setError("Username has to be of at least 4 characters")
+//        }
+
+        username.error=if (uname.isEmpty())"Username cannot be empty" else if (uname.length<4)"Username has to be of at lest 4 characters" else {user = true; null}
+
+        //username.error=if (uname.length<4)"Username has to be of at lest 4 characters" else null
+
+//        if(email.isEmpty())
+//        {
+//            email.setError("Email can not be empty")
+//        }
+
+        ////////////else if()
+
+        Email.error=if (email.isEmpty())"Email cannot be empty" else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())"Please enter a valid email address" else {mail=true;null}
+
+
+        //@ ka checkingggg!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+//
+//        if(pass.isEmpty())
+//        {
+//            pass.setError("Password cannot be empty")
+//        }
+//
+//        else if(pass.length<8)
+//        {
+//            pass.setError("Password must be of at least 8 characters")
+//        }
+
+//        else
+//        {
+//            val cap=false
+//            val num=false
+//            val chat=false
+//            for(i in 0 .. pass.length)
+//            {
+//                if(pass[i])
+//            }
+//        }
+
+        var cap=false
+        var num=false
+        var schar=false
+        var small=false
+
+        for(i in pass.indices)
+        {
+            if(pass[i] in 'A'..'Z')
+                cap=true
+
+            else if(pass[i] in '0'..'9')
+                num=true
+
+            else if(pass[i] in '!'..'/' || pass[i] in ':'..'@' || pass[i] in '['..'`' || pass[i] in '{'..'~')
+                schar=true
+
+            else
+                small=true
+
+            if(cap && num && schar && small)
+                break
+        }
+
+        passw.error=if (pass.isEmpty())"Password cannot be empty" else if (pass.length<8)"Password must be of at least 8 characters"
+        else if(!cap || !num || !schar || !small)"Password must contain a capital letter,one small letter, one number and one special character" else {pas=true ; null}
+
+        //passw.error=if (pass.length<8)"Password must be of at least 8 characters" else null
+
+        //char up,down,num,sp
+
+
+        //passw.error= if(cap && num && schar && small) null else "Password must contain a capital letter,one small letter, one number and one special character"
+
+
+//        if(cpass!=pass)
+//        {
+//            cpass.setError("Passwords do not match")
+//        }
+
+        conpass.error=if (cpass!=pass)"Passwords do not match" else {conpas=true ; null}
+
+        pHone.error=if(phone.length!=10)"Phone number should be of 10 digits" else {pho=true ; null}
+
+        return (user && pas && conpas && pho && mail)
+
+
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -59,19 +183,15 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(intent)
         }
         signUpBtn.setOnClickListener {
-            ProgressBar.visibility = View.VISIBLE
             val email = etEmail.text.toString()
             val pass = etPass.text.toString()
             val CnfPass = etCnfPass.text.toString()
             val usrName = etUsrName.text.toString()
-            if (TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Please Enter a Valid Email Address", Toast.LENGTH_SHORT)
-                    .show()
-            } else if (TextUtils.isEmpty(usrName)) {
-                Toast.makeText(this, "Please Enter a Valid User name", Toast.LENGTH_SHORT).show()
-            } else {
-                SignUp(email, pass, usrName)
-            }
+            //Example of functions that can be used for validation no need for lengthy way
+
+            var valiDate : Boolean = validate()
+            if(valiDate) SignUp(email, pass, usrName)
+
         }
 
 
@@ -95,6 +215,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun SignUp(Email: String, Pass: String, UsrName: String) {
         //auth.setTenantId(UsrName);
+        ProgressBar.visibility = View.VISIBLE
 
         auth.createUserWithEmailAndPassword(Email, Pass).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {

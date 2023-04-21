@@ -32,6 +32,25 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var etPass: EditText
     private lateinit var lginBtn: Button
 
+    fun validate(): Boolean
+    {
+        val username= findViewById<EditText>(R.id.editTextUsrName)
+        val passw =findViewById<EditText>(R.id.editTextPass)
+
+        val uname = username.text.toString()
+        val pass = passw.text.toString()
+
+        var user=false
+        var pas =false
+
+        username.error= if (uname.isEmpty())"Username cannot be empty"
+        else {user = true; null}
+
+        passw.error=if (pass.isEmpty())"Password cannot be empty" else{pas=true ; null}
+
+        return (user && pas)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +66,6 @@ class LoginActivity : AppCompatActivity() {
         lginBtn.setOnClickListener {
             Email = etEmail.text.toString()
             Pass = etPass.text.toString()
-            ProgressBar.visibility = View.VISIBLE
             etEmail.focusable = View.NOT_FOCUSABLE
             etPass.focusable = View.NOT_FOCUSABLE
             lginBtn.isEnabled = false
@@ -69,6 +87,7 @@ class LoginActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun Login() {
+        ProgressBar.visibility = View.VISIBLE
         auth.signInWithEmailAndPassword(Email, Pass)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -80,8 +99,8 @@ class LoginActivity : AppCompatActivity() {
                     etPass.focusable = View.FOCUSABLE
                     lginBtn.isEnabled = true
                     val intent = Intent(this, MainMenu::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     startActivity(intent)
-
                     Toast.makeText(this, "Successfully Logged in !!", Toast.LENGTH_SHORT).show()
 
                 } else {
