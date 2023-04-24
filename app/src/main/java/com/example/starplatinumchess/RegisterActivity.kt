@@ -191,7 +191,6 @@ class RegisterActivity : AppCompatActivity() {
 
             var valiDate : Boolean = validate()
             if(valiDate) SignUp(email, pass, usrName)
-
         }
 
 
@@ -281,7 +280,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun WriteUser(userId: String, userName: String, points: Int) {
-        val usr = UserData(userName, points)
+        val usr = UserData(userName, points, 0, 0)
 
         database.child("Users").child(userId).setValue(usr).addOnCompleteListener {
 

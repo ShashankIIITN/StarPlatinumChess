@@ -100,7 +100,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -123,7 +123,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -146,7 +146,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -169,7 +169,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -192,7 +192,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -215,7 +215,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -241,7 +241,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -264,7 +264,7 @@ class King(override val color: Color) : ChessPiece {
                         } else {
                             if (board[pos.first][pos.second]!!.color == color ||
                                 (board[pos.first][pos.second] !is Rook &&
-                                board[pos.first][pos.second] !is Queen)) {
+                                        board[pos.first][pos.second] !is Queen)) {
                                 toRestrict = null
                             } else {
                                 restrict = true
@@ -280,14 +280,17 @@ class King(override val color: Color) : ChessPiece {
                 Log.i("Main", "King in danger from 1")
                 val check = checkList[0]
                 okList.clear()
-                val dirI = (check.i - i) / abs(check.i - i)
-                val dirJ = (check.j - j) / abs(check.j - j)
-                var tempi = i
-                var tempj = j
-                while (tempi != check.i) {
-                    tempi += dirI
-                    tempj += dirJ
-                    okList.add(Pair(tempi, tempj))
+                okList.add(Pair(check.i, check.j))
+                if (check is Rook || check is Bishop || check is Queen) {
+                    val dirI = (check.i - i) / abs(check.i - i)
+                    val dirJ = (check.j - j) / abs(check.j - j)
+                    var tempi = i
+                    var tempj = j
+                    while (tempi != check.i) {
+                        tempi += dirI
+                        tempj += dirJ
+                        okList.add(Pair(tempi, tempj))
+                    }
                 }
                 for (piece in pieces) {
                     if (piece != this)

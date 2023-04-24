@@ -26,12 +26,11 @@ class SendGameData {
             val gameCh = gson.toJson(gameChoice(iprev, jprev, i, j))
 
 
-
             connectionsClient.sendPayload(
                 opponentEndpointId!!,
                 Payload.fromBytes(gameCh.toByteArray(UTF_8))
             ).addOnSuccessListener {
-                Toast.makeText(cntxt, "Sent Succesfully!", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(cntxt, "Sent Succesfully!", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener {
                 Toast.makeText(cntxt, "sending failed : " + it.message, Toast.LENGTH_SHORT).show()
             }
@@ -44,12 +43,12 @@ class SendGameData {
     private val payloadCallback: PayloadCallback = object : PayloadCallback() {
         lateinit var opData: String;
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
-            Toast.makeText(cntxt, "Got Response!", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(cntxt, "Got Response!", Toast.LENGTH_SHORT).show()
             payload.asBytes()?.let {
                 opData = String(it, UTF_8)
             }
 
-            Toast.makeText(cntxt, "opData", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(cntxt, "opData", Toast.LENGTH_SHORT).show()
 //            val gson = Gson()
 //
 //            OpChoice = gson.fromJson(opData, gameChoice::class.java)

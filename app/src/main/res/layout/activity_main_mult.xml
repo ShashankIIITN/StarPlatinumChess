@@ -6,8 +6,52 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/img"
         tools:context=".MultMainActivity">
 
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coorlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/img"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".MainActivity">
+
+            <com.google.android.material.bottomappbar.BottomAppBar
+                android:id="@+id/bottomAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                app:fabCradleMargin="10dp"
+                app:fabCradleRoundedCornerRadius="50dp">
+
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/bottomNavigationView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@android:color/transparent"
+                    app:labelVisibilityMode="labeled"
+                    app:menu="@menu/bottom_menu" />
+            </com.google.android.material.bottomappbar.BottomAppBar>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/msgBttn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/darker_gray"
+                android:contentDescription="@string/messg"
+                android:src="@drawable/baseline_message_24"
+                app:layout_anchor="@id/bottomAppBar"
+                app:maxImageSize="40dp"
+                app:tint="@android:color/background_dark" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/conLayout_1"
@@ -57,6 +101,7 @@
             android:padding="16dp"
             android:text="searching..."
             android:textAlignment="center"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -69,12 +114,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
             android:text="You (codeName)"
             android:textAlignment="center"
             android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/white"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.38"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/findOpponent"
             app:layout_constraintVertical_bias="0.641" />
@@ -84,6 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textColor="@color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/conLayout_1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,60 +147,14 @@
             android:text="Opponent (codeName)"
             android:textAlignment="center"
             android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/white"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/findOpponent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.207" />
-
-        <TextView
-            android:id="@+id/score"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
-            android:text=":"
-            android:textAlignment="center"
-            android:textSize="80sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myName" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/rock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/rock"
-            android:text="Rock"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/paper"
-            app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/score" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/paper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/paper"
-            android:text="Paper"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/scissors"
-            app:layout_constraintStart_toEndOf="@+id/rock"
-            app:layout_constraintTop_toBottomOf="@+id/score" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/scissors"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/scissors"
-            android:text="Scissors"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/paper"
-            app:layout_constraintTop_toBottomOf="@+id/score" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/findOpponent"

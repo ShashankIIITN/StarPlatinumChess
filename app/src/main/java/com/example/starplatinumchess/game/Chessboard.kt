@@ -178,7 +178,7 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
          }
             Log.i("Main", "$iprev, $jprev, $i, $j g djfslf")
 
-             Toast.makeText(cntxt, selected.toString(),Toast.LENGTH_SHORT).show()
+//             Toast.makeText(cntxt, selected.toString(),Toast.LENGTH_SHORT).show()
         //Log.i("Main", "Move from (${selected!!.i}, ${selected!!.j}) -> ($i, $j)")
         val function = selected!!.validMoves[Pair(i, j)] ?: return
         function(board, viewGrid, selected!!, i, j)

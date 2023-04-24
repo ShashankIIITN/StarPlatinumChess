@@ -27,6 +27,8 @@ class MainMenu : AppCompatActivity() {
     private lateinit var txtVwpts: TextView
     private lateinit var txtVwusr: TextView
     private lateinit var Progressbar :ProgressBar;
+    private var totalMatches : Int = 0
+    private var  MatchesWon : Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +53,9 @@ class MainMenu : AppCompatActivity() {
             val  intent = Intent(this@MainMenu, MultMainActivity::class.java)
             intent.putExtra("UserName", usrName)
             intent.putExtra("UserPoints", points)
-
+            intent.putExtra("UserId", userID)
+            intent.putExtra("totalMatches", totalMatches)
+            intent.putExtra("MatchesWon", MatchesWon)
             Toast.makeText(this , "usrname $usrName points  $points", Toast.LENGTH_SHORT).show()
             startActivity(intent)
         }
@@ -87,6 +91,8 @@ class MainMenu : AppCompatActivity() {
 
             usrName = data?.userName
             points = data?.points.toString().toInt()
+            totalMatches = data?.MatchesPlayed.toString().toInt()
+            MatchesWon = data?.MatchesWon.toString().toInt()
 
             txtVwusr.text = usrName.toString()
             txtVwpts.text = points.toString()

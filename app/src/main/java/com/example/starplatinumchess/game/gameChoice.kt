@@ -5,5 +5,7 @@ data class gameChoice(
     val iprev : Int,
     val jprev : Int,
     val i : Int,
-    val j : Int
+    val j : Int,
+    val type : Int = 0,
+    val msg : String? = null
 )
