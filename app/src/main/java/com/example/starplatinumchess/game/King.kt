@@ -321,11 +321,11 @@ class King(override val color: Color) : ChessPiece {
                 okList.add(Pair(check.i, check.j))
                 if (check is Rook || check is Bishop || check is Queen) {
 
-                    val dirI = sign((check.i - i).toDouble()).toInt()
-                    val dirJ = sign((check.j - j).toDouble()).toInt()
+                    val dirI = (check.i - i).sign
+                    val dirJ = (check.j - j).sign
                     var tempi = i
                     var tempj = j
-                    while (tempi != check.i) {
+                    while (tempi != check.i || tempj != check.j) {
                         tempi += dirI
                         tempj += dirJ
                         okList.add(Pair(tempi, tempj))
