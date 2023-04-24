@@ -1,5 +1,6 @@
 package com.example.starplatinumchess.game
 
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.DragEvent
 import android.view.MotionEvent
@@ -8,6 +9,8 @@ import android.widget.ImageView
 import com.example.starplatinumchess.Array2D
 import com.example.starplatinumchess.Black
 import com.example.starplatinumchess.MultMainActivity
+import com.example.starplatinumchess.R
+import com.example.starplatinumchess.cntxt
 import com.example.starplatinumchess.empty
 import com.example.starplatinumchess.game.ChessPiece.Color
 import com.example.starplatinumchess.sendData.SendGameData
@@ -27,7 +30,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
     private val whiteKing: King
     private val sendData = SendGameData()
 
-
+    private var MP : MediaPlayer? = null
     private val control = HashSet<Pair<Int, Int>>()
     private val checkList = ArrayList<ChessPiece>()
 
@@ -74,6 +77,11 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
                 board[7][4]!!, board[7][5]!!, board[7][6]!!, board[7][7]!!,
             )
         )
+        MP = MediaPlayer.create(cntxt, R.raw.chess_sound)
+        MP?.setOnPreparedListener{
+            Log.i("Listener", "Ready TO Go!!")
+        }
+        MP?.isLooping = false
 //        val onClickListener = fun (view : View) {
 //            val pos = view.tag as Pair<Int, Int>
 //            onCellSelected(pos)
@@ -208,6 +216,8 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
     }
 
     private fun update() {
+        MP?.start()
+
         toClear?.setBackgroundResource(empty)
         var turnList = whitePieces
         var otherList = blackPieces

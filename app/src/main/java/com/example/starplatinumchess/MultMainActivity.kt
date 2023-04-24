@@ -33,6 +33,7 @@ import com.google.android.gms.nearby.connection.ConnectionInfo
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback
 import com.google.android.gms.nearby.connection.ConnectionResolution
 import com.google.android.gms.nearby.connection.ConnectionsClient
+import com.google.android.gms.nearby.connection.ConnectionsStatusCodes.STATUS_ALREADY_CONNECTED_TO_ENDPOINT
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 import com.google.android.gms.nearby.connection.DiscoveryOptions
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
@@ -73,7 +74,7 @@ class MultMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainMultBinding
     private lateinit var database: DatabaseReference
 
-    private lateinit var tempGrid:Array2D<ImageView?>
+    private lateinit var tempGrid: Array2D<ImageView?>
 
     var endPoints = arrayOf<String>()
     val map = mutableMapOf<String, String>()
@@ -95,12 +96,14 @@ class MultMainActivity : AppCompatActivity() {
 
     private var first = true
 
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_mult)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_mult)
         Initit()
+
 
         //GameStart()
         cntxt = this
@@ -340,6 +343,11 @@ class MultMainActivity : AppCompatActivity() {
                 ).show()
                 UpdateFireBaseData(+50)
                 resetGame()
+            }else if(OpChoice!!.type == 6){
+                ShowDialog(8)
+            }else if(OpChoice!!.type == 7){
+                Toast.makeText(this@MultMainActivity, "Request Accepted!!", Toast.LENGTH_SHORT).show()
+                GameStart()
             }
 
         }
@@ -441,7 +449,7 @@ class MultMainActivity : AppCompatActivity() {
             builder.setNegativeButton("No") { dialogInterface, which ->
                 dialogInterface.dismiss()
             }
-        }else if (type == 4){
+        } else if (type == 4) {
             connectionsClient.stopAdvertising()
             connectionsClient.stopDiscovery()
             builder.setTitle("LOST!!")
@@ -454,7 +462,7 @@ class MultMainActivity : AppCompatActivity() {
                 ).show()
             }
             resetGame()
-        }else if (type == 5){
+        } else if (type == 5) {
             connectionsClient.stopAdvertising()
             connectionsClient.stopDiscovery()
             builder.setTitle("WON!!")
@@ -467,6 +475,37 @@ class MultMainActivity : AppCompatActivity() {
                 ).show()
             }
             resetGame()
+        } else if (type == 7) {
+            connectionsClient.stopAdvertising()
+            connectionsClient.stopDiscovery()
+            myDialog.dismiss()
+            builder.setTitle("REMATCH!!")
+            builder.setMessage("You are Already Connected with the user, would you like to have a rematch? ")
+            builder.setIcon(android.R.drawable.ic_dialog_info)
+            builder.setPositiveButton("Yes") { _, _ ->
+                Toast.makeText(
+                    this, "Requested a Rematch!!", Toast.LENGTH_SHORT
+                ).show()
+                sendGameChoice(0,0,0,0,6,null)
+            }
+            builder.setNegativeButton("No") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+            }
+        }else if (type == 8)
+        {
+            builder.setTitle("REMATCH!!")
+            builder.setMessage("$opponentName has requested a rematch, would you like to accept? ")
+            builder.setIcon(android.R.drawable.ic_dialog_info)
+            builder.setPositiveButton("Accept") { _, _ ->
+                Toast.makeText(
+                    this, "Accept the Rematch Request!!", Toast.LENGTH_SHORT
+                ).show()
+                sendGameChoice(0,0,0,0,7,null)
+                GameStart()
+            }
+            builder.setNegativeButton("No") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+            }
         }
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(true)
@@ -564,8 +603,6 @@ class MultMainActivity : AppCompatActivity() {
                 binding.status.text = "Connected"
                 binding.status.visibility = View.GONE
 //                setGameControllerEnabled(true)
-                findViewById<ConstraintLayout>(R.id.conLayout_1).visibility = View.VISIBLE
-                findViewById<CoordinatorLayout>(R.id.coorlay).visibility = View.VISIBLE
 
                 if (Black) {
                     findViewById<ConstraintLayout>(R.id.conLayout_1).rotation = 180F
@@ -586,14 +623,15 @@ class MultMainActivity : AppCompatActivity() {
         }
 
         override fun onDisconnected(endpointId: String) {
+            opponentName = null
+            opponentEndpointId = null
             resetGame()
         }
     }
 
     private fun resetGame() {
 
-        opponentEndpointId = null
-        opponentName = null
+
 //        opponentChoice = null
         opponentScore = 0
 //        myChoice = null
@@ -624,7 +662,8 @@ class MultMainActivity : AppCompatActivity() {
 
     private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
         override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
-            Toast.makeText(baseContext, "Found Endpoint: " + info.endpointName, Toast.LENGTH_SHORT).show()
+            Toast.makeText(baseContext, "Found Endpoint: " + info.endpointName, Toast.LENGTH_SHORT)
+                .show()
             if (info.endpointName !in endPoints) {
                 endPoints += info.endpointName
                 map[endpointId] = info.endpointName
@@ -634,7 +673,8 @@ class MultMainActivity : AppCompatActivity() {
         }
 
         override fun onEndpointLost(endpointId: String) {
-            Toast.makeText(baseContext, "Endpont lost  ${map[endpointId]}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(baseContext, "Endpont lost  ${map[endpointId]}", Toast.LENGTH_SHORT)
+                .show()
 
             if (map[endpointId] in endPoints) {
                 endPoints = endPoints.filter { it != map[endpointId] }.toTypedArray()
@@ -701,6 +741,9 @@ class MultMainActivity : AppCompatActivity() {
                 }.addOnFailureListener {
                     Toast.makeText(baseContext, it.message.toString(), Toast.LENGTH_SHORT)
                         .show()
+                    if (it.message!!.contains(STATUS_ALREADY_CONNECTED_TO_ENDPOINT.toString())) {
+                        ShowDialog(7)
+                    }
                 }
             }
             txtclose.setOnClickListener {
@@ -726,6 +769,8 @@ class MultMainActivity : AppCompatActivity() {
     }
 
     private fun GameStart() {
+        findViewById<ConstraintLayout>(R.id.conLayout_1).visibility = View.VISIBLE
+        findViewById<CoordinatorLayout>(R.id.coorlay).visibility = View.VISIBLE
         if (first) {
             tempGrid = Array2D<ImageView?>(8) {
                 Array(8) { null }
@@ -772,7 +817,7 @@ class MultMainActivity : AppCompatActivity() {
         database.child("Users").child(userId).child("MatchesWon").setValue(MatchesWon)
     }
 
-    fun Initit(){
+    fun Initit() {
 
     }
 
