@@ -35,14 +35,17 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_width="390dp"
+        android:layout_height="277dp"
         android:layout_margin="10sp"
-        android:layout_marginTop="10sp"
+        android:layout_marginTop="96dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.175">
 
         <LinearLayout
             android:id="@+id/linearLayout_Name"
@@ -54,19 +57,17 @@
                 android:id="@+id/etext_email"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:drawableStart="@drawable/baseline_person_24"
+                android:drawablePadding="5dp"
+
                 android:ems="10"
                 android:hint="Email Address"
-
                 android:inputType="textPersonName"
                 android:text=""
                 android:textColor="@color/white"
-                android:textColorHint="#C6C8C1C1"
-                android:drawablePadding="5dp"
-                android:drawableStart="@drawable/baseline_person_24"/>
+                android:textColorHint="#C6C8C1C1" />
 
         </LinearLayout>
-
-
 
 
         <LinearLayout
@@ -79,14 +80,14 @@
                 android:id="@+id/etext_pass"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:drawableLeft="@drawable/baseline_password_24"
+                android:drawablePadding="6dp"
                 android:ems="10"
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:text=""
                 android:textColor="@color/white"
-                android:textColorHint="#C6C8C1C1"
-                android:drawablePadding="6dp"
-                android:drawableLeft="@drawable/baseline_password_24"/>
+                android:textColorHint="#C6C8C1C1" />
 
         </LinearLayout>
 
@@ -96,21 +97,25 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
+            android:background="#F72F3D"
             android:gravity="center"
-            android:text="signin"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:text="sign in"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="30sp"
             android:layout_gravity="center"
+            android:layout_marginTop="20sp"
             android:text="Not a user?"
             android:textAlignment="center"
-            android:textColor="#EE00BCD4"
-            android:textSize="17dp"/>
+            android:textColor="#F72F3D"
+            android:textSize="17dp" />
 
     </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progressBar2"
         style="?android:attr/progressBarStyle"

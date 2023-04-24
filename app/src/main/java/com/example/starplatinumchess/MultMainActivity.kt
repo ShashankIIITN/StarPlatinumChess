@@ -64,20 +64,21 @@ var opponentName: String? = null
 lateinit var connectionsClient: ConnectionsClient
 lateinit var cntxt: Context
 lateinit var chessboard: Chessboard
+private var totalMatches: Int = 0
+private var MatchesWon: Int = 0
+private lateinit var userId: String
+private var usrPoints: Int = 0
 
 class MultMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainMultBinding
     private lateinit var database: DatabaseReference
-    private lateinit var userId: String
-    private var totalMatches: Int = 0
-    private var MatchesWon: Int = 0
 
+    private lateinit var tempGrid:Array2D<ImageView?>
 
     var endPoints = arrayOf<String>()
     val map = mutableMapOf<String, String>()
     var sentReq = false
     private var usrName: String? = null
-    private var usrPoints: Int = 0
 
 
     private val STRATEGY = Strategy.P2P_STAR
@@ -92,11 +93,14 @@ class MultMainActivity : AppCompatActivity() {
 
     private lateinit var myDialog: Dialog
 
+    private var first = true
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_mult)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_mult)
+        Initit()
 
         //GameStart()
         cntxt = this
@@ -149,11 +153,13 @@ class MultMainActivity : AppCompatActivity() {
 
                         connectionsClient.stopAdvertising()
                         connectionsClient.stopDiscovery()
+                        UpdateFireBaseData(-50)
                         opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
                         resetGame()
                         Toast.makeText(
                             applicationContext, "Disconnected Successfully", Toast.LENGTH_LONG
                         ).show()
+
                     }
                     builder.setNegativeButton("No") { dialogInterface, which ->
 //                        Toast.makeText(applicationContext, "clicked No", Toast.LENGTH_LONG).show()
@@ -435,6 +441,32 @@ class MultMainActivity : AppCompatActivity() {
             builder.setNegativeButton("No") { dialogInterface, which ->
                 dialogInterface.dismiss()
             }
+        }else if (type == 4){
+            connectionsClient.stopAdvertising()
+            connectionsClient.stopDiscovery()
+            builder.setTitle("LOST!!")
+            builder.setMessage("You have Lost the Match!! ")
+            builder.setIcon(R.drawable.baseline_assist_walker_24)
+            UpdateFireBaseData(-50)
+            builder.setPositiveButton("Ok") { _, _ ->
+                Toast.makeText(
+                    this, "Lost 50 Points!!", Toast.LENGTH_LONG
+                ).show()
+            }
+            resetGame()
+        }else if (type == 5){
+            connectionsClient.stopAdvertising()
+            connectionsClient.stopDiscovery()
+            builder.setTitle("WON!!")
+            builder.setMessage("You have WON the Match!! ")
+            builder.setIcon(R.drawable.baseline_rowing_24)
+            UpdateFireBaseData(50)
+            builder.setPositiveButton("Ok") { _, _ ->
+                Toast.makeText(
+                    this, "Gained 50 Points!!", Toast.LENGTH_LONG
+                ).show()
+            }
+            resetGame()
         }
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(true)
@@ -576,7 +608,6 @@ class MultMainActivity : AppCompatActivity() {
         binding.opponentName.text = "opponent\n(none yet)"
         binding.opponentName.visibility = View.GONE
         binding.myName.visibility = View.GONE
-
     }
 
     private fun startAdvertising() {
@@ -695,41 +726,43 @@ class MultMainActivity : AppCompatActivity() {
     }
 
     private fun GameStart() {
-
-        val tempGrid = Array2D<ImageView?>(8) {
-            Array(8) { null }
-        }
-        tempGrid[0][0] = binding.sampleCell
-        if (Black) {
-            tempGrid[0][0]?.rotation = 180f
-        }
-        for (j in 1 until 8) {
-            val cell = ImageView(this)
-            cell.layoutParams = binding.sampleCell.layoutParams
-            if (Black) {
-                cell.rotation = 180f
+        if (first) {
+            tempGrid = Array2D<ImageView?>(8) {
+                Array(8) { null }
             }
-            binding.sampleRow.addView(cell)
-            tempGrid[0][j] = cell
-        }
-        for (i in 1 until 8) {
-            val row = LinearLayout(this)
-            row.layoutParams = binding.sampleRow.layoutParams
-            for (j in 0 until 8) {
+            tempGrid[0][0] = binding.sampleCell
+            if (Black) {
+                tempGrid[0][0]?.rotation = 180f
+            }
+            for (j in 1 until 8) {
                 val cell = ImageView(this)
+                cell.layoutParams = binding.sampleCell.layoutParams
                 if (Black) {
                     cell.rotation = 180f
                 }
-                cell.layoutParams = binding.sampleCell.layoutParams
-                row.addView(cell)
-                tempGrid[i][j] = cell
+                binding.sampleRow.addView(cell)
+                tempGrid[0][j] = cell
             }
-            binding.chessboard.addView(row)
+            for (i in 1 until 8) {
+                val row = LinearLayout(this)
+                row.layoutParams = binding.sampleRow.layoutParams
+                for (j in 0 until 8) {
+                    val cell = ImageView(this)
+                    if (Black) {
+                        cell.rotation = 180f
+                    }
+                    cell.layoutParams = binding.sampleCell.layoutParams
+                    row.addView(cell)
+                    tempGrid[i][j] = cell
+                }
+                binding.chessboard.addView(row)
+            }
+            first = false
         }
-        chessboard = Chessboard(tempGrid)
+        chessboard = Chessboard(tempGrid, this@MultMainActivity)
     }
 
-    fun UpdateFireBaseData(Pts: Int) {
+    internal fun UpdateFireBaseData(Pts: Int) {
 
         usrPoints += Pts
         totalMatches++
@@ -739,5 +772,8 @@ class MultMainActivity : AppCompatActivity() {
         database.child("Users").child(userId).child("MatchesWon").setValue(MatchesWon)
     }
 
+    fun Initit(){
+
+    }
 
 }

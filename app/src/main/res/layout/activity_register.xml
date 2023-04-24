@@ -34,9 +34,8 @@
             android:layout_height="match_parent"
             android:text="SIGNUP"
             android:textAlignment="center"
-            android:textSize="40sp"
             android:textColor="@color/white"
-            />
+            android:textSize="40sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -46,9 +45,12 @@
         android:layout_margin="10sp"
         android:layout_marginTop="5sp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.842"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.318">
 
         <LinearLayout
             android:id="@+id/linearLayout_Name"
@@ -60,15 +62,15 @@
                 android:id="@+id/editTextUsrName"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:drawableLeft="@drawable/baseline_person_24"
+                android:drawablePadding="5dp"
+
                 android:ems="10"
                 android:hint="Username"
-
                 android:inputType="textPersonName"
                 android:text=""
                 android:textColor="@color/white"
-                android:textColorHint="#C6C8C1C1"
-                android:drawablePadding="5dp"
-                android:drawableLeft="@drawable/baseline_person_24"/>
+                android:textColorHint="#C6C8C1C1" />
 
         </LinearLayout>
 
@@ -84,14 +86,14 @@
                 android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:drawableLeft="@drawable/baseline_email_24"
+                android:drawablePadding="6dp"
                 android:ems="10"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:text=""
                 android:textColor="@color/white"
-                android:textColorHint="#C6C8C1C1"
-                android:drawablePadding="6dp"
-                android:drawableLeft="@drawable/baseline_email_24"/>
+                android:textColorHint="#C6C8C1C1" />
         </LinearLayout>
 
 
@@ -105,14 +107,14 @@
                 android:id="@+id/editTextPass"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:drawableLeft="@drawable/baseline_password_24"
+                android:drawablePadding="6dp"
                 android:ems="10"
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:text=""
                 android:textColor="@color/white"
-                android:textColorHint="#C6C8C1C1"
-                android:drawablePadding="6dp"
-                android:drawableLeft="@drawable/baseline_password_24"/>
+                android:textColorHint="#C6C8C1C1" />
 
         </LinearLayout>
 
@@ -126,14 +128,14 @@
                 android:id="@+id/editTextCnfPass"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:drawableLeft="@drawable/baseline_password_24"
+                android:drawablePadding="6dp"
                 android:ems="10"
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
                 android:text=""
                 android:textColor="@color/white"
-                android:textColorHint="#C6C8C1C1"
-                android:drawablePadding="6dp"
-                android:drawableLeft="@drawable/baseline_password_24"/>
+                android:textColorHint="#C6C8C1C1" />
 
         </LinearLayout>
 
@@ -147,14 +149,14 @@
                 android:id="@+id/editTextPhone"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:drawableLeft="@drawable/baseline_phone_24"
+                android:drawablePadding="5dp"
                 android:ems="10"
                 android:hint="Phone"
                 android:inputType="phone"
                 android:text=""
                 android:textColor="@color/white"
-                android:textColorHint="#C6C8C1C1"
-                android:drawablePadding="5dp"
-                android:drawableLeft="@drawable/baseline_phone_24"/>
+                android:textColorHint="#C6C8C1C1" />
         </LinearLayout>
 
         <LinearLayout
@@ -190,9 +192,8 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="Male"
-                    android:textSize="18sp"
                     android:textColor="@color/white"
-                    />
+                    android:textSize="18sp" />
 
                 <RadioButton
                     android:id="@+id/radioButtonFemale"
@@ -200,8 +201,8 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="Female"
-                    android:textSize="18sp"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
                 <RadioButton
                     android:id="@+id/radioButtonOther"
@@ -209,29 +210,33 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="Other"
-                    android:textSize="18sp"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
             </RadioGroup>
         </LinearLayout>
 
         <Button
             android:id="@+id/button"
-            android:layout_width="120dp"
+            android:layout_width="163dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30sp"
+            android:background="#F72F3D"
             android:gravity="center"
             android:text="Register"
-            android:textColor="@color/black" />
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/Ald_Usr_Txt"
             android:layout_width="wrap_content"
             android:layout_height="20sp"
             android:layout_gravity="center"
+            android:layout_marginTop="20sp"
             android:text="Already a user?"
             android:textAlignment="center"
-            android:textColor="#EE00BCD4">
+            android:textColor="#F72F3D">
 
         </TextView>
 

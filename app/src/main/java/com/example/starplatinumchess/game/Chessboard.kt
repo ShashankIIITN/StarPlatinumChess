@@ -5,27 +5,26 @@ import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import com.example.starplatinumchess.Array2D
 import com.example.starplatinumchess.Black
-import com.example.starplatinumchess.cntxt
+import com.example.starplatinumchess.MultMainActivity
 import com.example.starplatinumchess.empty
 import com.example.starplatinumchess.game.ChessPiece.Color
 import com.example.starplatinumchess.sendData.SendGameData
 import java.util.LinkedList
 
-class Chessboard(viewGrid : Array2D<ImageView?>) {
+class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity) {
 
-    private var viewGrid : Array2D<ImageView> = Array(8) {i->
-        Array(8) {j->viewGrid[i][j]!!}
+    private var viewGrid: Array2D<ImageView> = Array(8) { i ->
+        Array(8) { j -> viewGrid[i][j]!! }
     }
-    private var board : Array2D<ChessPiece?> = Array(8){ arrayOfNulls(8)}
-    private var selected : ChessPiece? = null
+    private var board: Array2D<ChessPiece?> = Array(8) { arrayOfNulls(8) }
+    private var selected: ChessPiece? = null
 
     private val blackPieces = LinkedList<ChessPiece>()
     private val whitePieces = LinkedList<ChessPiece>()
-    private  val blackKing : King
-    private  val whiteKing : King
+    private val blackKing: King
+    private val whiteKing: King
     private val sendData = SendGameData()
 
 
@@ -33,6 +32,7 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
     private val checkList = ArrayList<ChessPiece>()
 
     private var turnColor = Color.WHITE
+    private var toClear: ImageView? = null
 
     init {
         for (i in 0 until 8) {
@@ -49,8 +49,12 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
         board[0][5] = Bishop(Color.BLACK)
         board[0][6] = Knight(Color.BLACK)
         board[0][7] = Rook(Color.BLACK)
-        blackPieces.addAll(listOf(board[0][0]!!, board[0][1]!!, board[0][2]!!, board[0][3]!!,
-            board[0][4]!!, board[0][5]!!, board[0][6]!!, board[0][7]!!,))
+        blackPieces.addAll(
+            listOf(
+                board[0][0]!!, board[0][1]!!, board[0][2]!!, board[0][3]!!,
+                board[0][4]!!, board[0][5]!!, board[0][6]!!, board[0][7]!!,
+            )
+        )
 
         board[7][0] = Rook(Color.WHITE)
         board[7][1] = Knight(Color.WHITE)
@@ -64,13 +68,17 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
         blackKing = board[0][3] as King
         whiteKing = board[7][3] as King
 
-        whitePieces.addAll(listOf(board[7][0]!!, board[7][1]!!, board[7][2]!!, board[7][3]!!,
-            board[7][4]!!, board[7][5]!!, board[7][6]!!, board[7][7]!!,))
+        whitePieces.addAll(
+            listOf(
+                board[7][0]!!, board[7][1]!!, board[7][2]!!, board[7][3]!!,
+                board[7][4]!!, board[7][5]!!, board[7][6]!!, board[7][7]!!,
+            )
+        )
 //        val onClickListener = fun (view : View) {
 //            val pos = view.tag as Pair<Int, Int>
 //            onCellSelected(pos)
 //        }
-        val onTouchListener = fun(view : View,  motionEvent : MotionEvent) : Boolean {
+        val onTouchListener = fun(view: View, motionEvent: MotionEvent): Boolean {
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
                     onCellSelected(view.tag as Pair<Int, Int>)
@@ -78,24 +86,27 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
                         view.startDragAndDrop(null, View.DragShadowBuilder(view), view, 0)
                     }
                 }
+
                 MotionEvent.ACTION_UP -> {
                     view.performClick()
                 }
             }
             return true
         }
-        val onDragListener = fun(view : View, dragEvent : DragEvent) : Boolean {
+        val onDragListener = fun(view: View, dragEvent: DragEvent): Boolean {
             if (dragEvent.localState == view) {
                 Log.i("MainActivity", "Rejected")
                 return false
             }
-            when(dragEvent.action) {
+            when (dragEvent.action) {
                 DragEvent.ACTION_DRAG_ENTERED -> {
 
                 }
+
                 DragEvent.ACTION_DRAG_EXITED -> {
 
                 }
+
                 DragEvent.ACTION_DROP -> {
                     Log.i("MainActivity", "Dropped")
                     onCellSelected(view.tag as Pair<Int, Int>)
@@ -121,17 +132,18 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
         update()
     }
 
-    fun onCellSelected(cell : Pair<Int, Int>) {
+    fun onCellSelected(cell: Pair<Int, Int>) {
         if (selected == null) {
             if (board[cell.first][cell.second] != null &&
                 board[cell.first][cell.second]!!.color == turnColor &&
-                board[cell.first][cell.second]!!.validMoves.isNotEmpty()) {
+                board[cell.first][cell.second]!!.validMoves.isNotEmpty()
+            ) {
                 selected = board[cell.first][cell.second]
                 for ((pos, _) in selected!!.validMoves) {
                     viewGrid[pos.first][pos.second].setBackgroundResource(android.R.color.holo_green_light)
                 }
             }
-        } else if(Black && turnColor == Color.BLACK || !Black && turnColor == Color.WHITE){
+        } else if (Black && turnColor == Color.BLACK || !Black && turnColor == Color.WHITE) {
             makeMove(cell.first, cell.second)
             for ((pos, _) in selected!!.validMoves) {
                 viewGrid[pos.first][pos.second].setBackgroundResource(empty)
@@ -139,12 +151,14 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
             selected = null
         }
     }
-     fun onCellSelected(cell : Pair<Int, Int>, select : ChessPiece?) {
-         selected = select
+
+    fun onCellSelected(cell: Pair<Int, Int>, select: ChessPiece?) {
+        selected = select
         if (selected == null) {
             if (board[cell.first][cell.second] != null &&
                 board[cell.first][cell.second]!!.color == turnColor &&
-                board[cell.first][cell.second]!!.validMoves.isNotEmpty()) {
+                board[cell.first][cell.second]!!.validMoves.isNotEmpty()
+            ) {
                 selected = board[cell.first][cell.second]
                 for ((pos, _) in selected!!.validMoves) {
                     viewGrid[pos.first][pos.second].setBackgroundResource(android.R.color.holo_green_light)
@@ -159,24 +173,26 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
         }
     }
 
-    private fun makeMove(i : Int, j : Int) {
+    private fun makeMove(i: Int, j: Int) {
         Log.i("Main", "Move from (${selected!!.i}, ${selected!!.j}) -> ($i, $j)")
         val iprev = selected!!.i;
         val jprev = selected!!.j;
         val function = selected!!.validMoves[Pair(i, j)] ?: return
         function(board, viewGrid, selected!!, i, j)
         turnColor = if (turnColor == Color.WHITE) Color.BLACK else Color.WHITE
-        sendData.sendGameChoice(iprev, jprev, i, j)
+        sendData.sendGameChoice(iprev, jprev, i, j, 0)
         update()
         Log.i("Main", "new pos: ${selected!!.i}, ${selected!!.j}")
     }
-     fun makeMove(iprev:Int, jprev:Int, i : Int, j : Int) {
-         if (board[iprev][jprev] != null &&
-             board[iprev][jprev]!!.color == turnColor &&
-             board[iprev][jprev]!!.validMoves.isNotEmpty()) {
-             selected = board[iprev][jprev]
-         }
-            Log.i("Main", "$iprev, $jprev, $i, $j g djfslf")
+
+    fun makeMove(iprev: Int, jprev: Int, i: Int, j: Int) {
+        if (board[iprev][jprev] != null &&
+            board[iprev][jprev]!!.color == turnColor &&
+            board[iprev][jprev]!!.validMoves.isNotEmpty()
+        ) {
+            selected = board[iprev][jprev]
+        }
+        Log.i("Main", "$iprev, $jprev, $i, $j g djfslf")
 
 //             Toast.makeText(cntxt, selected.toString(),Toast.LENGTH_SHORT).show()
         //Log.i("Main", "Move from (${selected!!.i}, ${selected!!.j}) -> ($i, $j)")
@@ -185,13 +201,14 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
         turnColor = if (turnColor == Color.WHITE) Color.BLACK else Color.WHITE
         update()
         Log.i("Main", "new pos: ${selected!!.i}, ${selected!!.j}")
-         for ((pos, _) in selected!!.validMoves) {
-             viewGrid[pos.first][pos.second].setBackgroundResource(empty)
-         }
-         selected = null
+        for ((pos, _) in selected!!.validMoves) {
+            viewGrid[pos.first][pos.second].setBackgroundResource(empty)
+        }
+        selected = null
     }
 
     private fun update() {
+        toClear?.setBackgroundResource(empty)
         var turnList = whitePieces
         var otherList = blackPieces
         var turnKing = whiteKing
@@ -214,7 +231,7 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
         it = turnList.iterator()
         while (it.hasNext()) {
             val piece = it.next()
-            if (piece.alive){
+            if (piece.alive) {
                 piece.updateValidMoves(board, control)
             } else {
                 it.remove()
@@ -224,6 +241,25 @@ class Chessboard(viewGrid : Array2D<ImageView?>) {
         for (piece in checkList) {
             Log.i("Main", "${piece.color}, $piece, ${piece.j}")
         }
+        if (checkList.isNotEmpty()) {
+            toClear = viewGrid[turnKing.i][turnKing.j]
+            toClear!!.setBackgroundResource(android.R.color.holo_red_light)
+        }
         turnKing.restrictMoves(board, checkList, turnList)
+        var over = true
+        for (piece in turnList) {
+            if (piece.validMoves.isNotEmpty()) {
+                over = false
+                break
+            }
+        }
+        if (over) {
+            if (!Black.xor(  turnColor == Color.BLACK)) {
+                    parentRef.ShowDialog(4)
+            }else{
+                parentRef.ShowDialog(5)
+            }
+            Log.i("Main", "CHECKMATE")
+        }
     }
 }
