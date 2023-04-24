@@ -279,7 +279,7 @@ class MultMainActivity : AppCompatActivity() {
 
         val gson = Gson()
 //        val gameCh = gson.toJson(gameChoice(selected, i, j))
-        val gameCh = gson.toJson(gameChoice(iprev, jprev, i, j, type, msg))
+        val gameCh = gson.toJson(gameChoice(iprev, jprev, i, j, -1, type, msg))
         Log.i("MainMSG", msg + "inside Send Game Choice")
 //        val gamech1 = gameChoice(selected, i, j)
 
@@ -317,7 +317,7 @@ class MultMainActivity : AppCompatActivity() {
 //            ).show()
 
 //                chessboard.onCellSelected(Pair(OpChoice!!.i, OpChoice!!.j), OpChoice!!.selected)
-                chessboard.makeMove(OpChoice!!.iprev, OpChoice!!.jprev, OpChoice!!.i, OpChoice!!.j)
+                chessboard.makeMove(OpChoice!!.iprev, OpChoice!!.jprev, OpChoice!!.i, OpChoice!!.j, OpChoice!!.choice)
             } else if (OpChoice!!.type == 1) {
                 Toast.makeText(
                     baseContext, "${OpChoice!!.msg}", Toast.LENGTH_SHORT
