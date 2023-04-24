@@ -26,11 +26,14 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:shadowColor="@color/glow_color"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="30"
             android:text="LOGIN"
             android:textAlignment="center"
-            android:textSize="40sp"
             android:textColor="@color/white"
-            />
+            android:textSize="40sp" />
     </LinearLayout>
 
     <LinearLayout

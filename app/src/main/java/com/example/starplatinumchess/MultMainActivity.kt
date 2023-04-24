@@ -102,7 +102,6 @@ class MultMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_mult)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_mult)
-        Initit()
 
 
         //GameStart()
@@ -116,7 +115,7 @@ class MultMainActivity : AppCompatActivity() {
                 R.id.Draw -> ShowDialog(0)
                 R.id.Resign -> ShowDialog(1)
             }
-            false;
+            false
         }
 
         usrName = intent.getStringExtra("UserName")
@@ -158,7 +157,7 @@ class MultMainActivity : AppCompatActivity() {
                         connectionsClient.stopDiscovery()
                         UpdateFireBaseData(-50)
                         opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
-                        resetGame()
+                        resetGame(0)
                         Toast.makeText(
                             applicationContext, "Disconnected Successfully", Toast.LENGTH_LONG
                         ).show()
@@ -207,7 +206,7 @@ class MultMainActivity : AppCompatActivity() {
 //        findViewById<AppCompatButton>(R.id.disconnect).setOnClickListener {
 //        }
 
-        resetGame()
+        resetGame(1)
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -317,7 +316,13 @@ class MultMainActivity : AppCompatActivity() {
 //            ).show()
 
 //                chessboard.onCellSelected(Pair(OpChoice!!.i, OpChoice!!.j), OpChoice!!.selected)
-                chessboard.makeMove(OpChoice!!.iprev, OpChoice!!.jprev, OpChoice!!.i, OpChoice!!.j, OpChoice!!.choice)
+                chessboard.makeMove(
+                    OpChoice!!.iprev,
+                    OpChoice!!.jprev,
+                    OpChoice!!.i,
+                    OpChoice!!.j,
+                    OpChoice!!.choice
+                )
             } else if (OpChoice!!.type == 1) {
                 Toast.makeText(
                     baseContext, "${OpChoice!!.msg}", Toast.LENGTH_SHORT
@@ -327,8 +332,8 @@ class MultMainActivity : AppCompatActivity() {
             } else if (OpChoice!!.type == 3) {
                 connectionsClient.stopAdvertising()
                 connectionsClient.stopDiscovery()
-                opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
-                resetGame()
+//                opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
+                resetGame(1)
                 Toast.makeText(
                     applicationContext, "The Match Ended in Draw", Toast.LENGTH_LONG
                 ).show()
@@ -342,11 +347,12 @@ class MultMainActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
                 UpdateFireBaseData(+50)
-                resetGame()
-            }else if(OpChoice!!.type == 6){
+                resetGame(0)
+            } else if (OpChoice!!.type == 6) {
                 ShowDialog(8)
-            }else if(OpChoice!!.type == 7){
-                Toast.makeText(this@MultMainActivity, "Request Accepted!!", Toast.LENGTH_SHORT).show()
+            } else if (OpChoice!!.type == 7) {
+                Toast.makeText(this@MultMainActivity, "Request Accepted!!", Toast.LENGTH_SHORT)
+                    .show()
                 GameStart()
             }
 
@@ -405,8 +411,8 @@ class MultMainActivity : AppCompatActivity() {
                 sendGameChoice(0, 0, 0, 0, 3, null)
                 connectionsClient.stopAdvertising()
                 connectionsClient.stopDiscovery()
-                opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
-                resetGame()
+//                opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
+                resetGame(1)
                 Toast.makeText(
                     applicationContext, "The Match Ended in Draw", Toast.LENGTH_LONG
                 ).show()
@@ -440,7 +446,7 @@ class MultMainActivity : AppCompatActivity() {
                 connectionsClient.stopAdvertising()
                 connectionsClient.stopDiscovery()
                 opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
-                resetGame()
+                resetGame(0)
                 Toast.makeText(
                     applicationContext, "Disconnected Successfully", Toast.LENGTH_LONG
                 ).show()
@@ -461,7 +467,7 @@ class MultMainActivity : AppCompatActivity() {
                     this, "Lost 50 Points!!", Toast.LENGTH_LONG
                 ).show()
             }
-            resetGame()
+            resetGame(1)
         } else if (type == 5) {
             connectionsClient.stopAdvertising()
             connectionsClient.stopDiscovery()
@@ -474,7 +480,7 @@ class MultMainActivity : AppCompatActivity() {
                     this, "Gained 50 Points!!", Toast.LENGTH_LONG
                 ).show()
             }
-            resetGame()
+            resetGame(1)
         } else if (type == 7) {
             connectionsClient.stopAdvertising()
             connectionsClient.stopDiscovery()
@@ -486,21 +492,20 @@ class MultMainActivity : AppCompatActivity() {
                 Toast.makeText(
                     this, "Requested a Rematch!!", Toast.LENGTH_SHORT
                 ).show()
-                sendGameChoice(0,0,0,0,6,null)
+                sendGameChoice(0, 0, 0, 0, 6, null)
             }
             builder.setNegativeButton("No") { dialogInterface, _ ->
                 dialogInterface.dismiss()
             }
-        }else if (type == 8)
-        {
+        } else if (type == 8) {
             builder.setTitle("REMATCH!!")
             builder.setMessage("$opponentName has requested a rematch, would you like to accept? ")
             builder.setIcon(android.R.drawable.ic_dialog_info)
             builder.setPositiveButton("Accept") { _, _ ->
                 Toast.makeText(
-                    this, "Accept the Rematch Request!!", Toast.LENGTH_SHORT
+                    this, "Accepted the Rematch Request!!", Toast.LENGTH_SHORT
                 ).show()
-                sendGameChoice(0,0,0,0,7,null)
+                sendGameChoice(0, 0, 0, 0, 7, null)
                 GameStart()
             }
             builder.setNegativeButton("No") { dialogInterface, _ ->
@@ -601,15 +606,14 @@ class MultMainActivity : AppCompatActivity() {
                 opponentEndpointId = endpointId
                 binding.opponentName.text = opponentName
                 binding.status.text = "Connected"
-                binding.status.visibility = View.GONE
+
 //                setGameControllerEnabled(true)
 
                 if (Black) {
                     findViewById<ConstraintLayout>(R.id.conLayout_1).rotation = 180F
                 }
 
-                binding.myName.visibility = View.VISIBLE
-                binding.opponentName.visibility = View.VISIBLE
+
 
                 GameStart()
             } else {
@@ -623,15 +627,17 @@ class MultMainActivity : AppCompatActivity() {
         }
 
         override fun onDisconnected(endpointId: String) {
-            opponentName = null
-            opponentEndpointId = null
-            resetGame()
+
+            resetGame(0)
         }
     }
 
-    private fun resetGame() {
+    private fun resetGame(sig: Int) {
+        if (sig == 0) {
 
-
+            opponentName = null
+            opponentEndpointId = null
+        }
 //        opponentChoice = null
         opponentScore = 0
 //        myChoice = null
@@ -708,7 +714,8 @@ class MultMainActivity : AppCompatActivity() {
             stopDiscovery()
             stopAllEndpoints()
         }
-        resetGame()
+        resetGame(0)
+
         super.onStop()
     }
 
@@ -769,6 +776,9 @@ class MultMainActivity : AppCompatActivity() {
     }
 
     private fun GameStart() {
+        binding.status.visibility = View.GONE
+        binding.myName.visibility = View.VISIBLE
+        binding.opponentName.visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.conLayout_1).visibility = View.VISIBLE
         findViewById<CoordinatorLayout>(R.id.coorlay).visibility = View.VISIBLE
         if (first) {
@@ -817,8 +827,5 @@ class MultMainActivity : AppCompatActivity() {
         database.child("Users").child(userId).child("MatchesWon").setValue(MatchesWon)
     }
 
-    fun Initit() {
-
-    }
 
 }

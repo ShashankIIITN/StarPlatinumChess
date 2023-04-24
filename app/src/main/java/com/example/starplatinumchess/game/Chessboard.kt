@@ -8,11 +8,11 @@ import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import com.example.starplatinumchess.Array2D
 import com.example.starplatinumchess.Black
 import com.example.starplatinumchess.MultMainActivity
 import com.example.starplatinumchess.R
-import com.example.starplatinumchess.cntxt
 import com.example.starplatinumchess.empty
 import com.example.starplatinumchess.game.ChessPiece.Color
 import com.example.starplatinumchess.sendData.SendGameData
@@ -79,7 +79,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
                 board[7][4]!!, board[7][5]!!, board[7][6]!!, board[7][7]!!,
             )
         )
-        MP = MediaPlayer.create(cntxt, R.raw.chess_sound)
+        MP = MediaPlayer.create(parentRef.baseContext, R.raw.chess_sound)
         MP?.setOnPreparedListener {
             Log.i("Listener", "Ready TO Go!!")
         }
@@ -89,40 +89,47 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
 //            onCellSelected(pos)
 //        }
         val onTouchListener = fun(view: View, motionEvent: MotionEvent): Boolean {
-            when (motionEvent.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    onCellSelected(view.tag as Pair<Int, Int>)
-                    if (selected != null) {
-                        view.startDragAndDrop(null, View.DragShadowBuilder(view), view, 0)
+            if (Black && turnColor == Color.BLACK || !Black && turnColor == Color.WHITE) {
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        onCellSelected(view.tag as Pair<Int, Int>)
+                        if (selected != null) {
+                            view.startDragAndDrop(null, View.DragShadowBuilder(view), view, 0)
+                        }
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+                        view.performClick()
                     }
                 }
-
-                MotionEvent.ACTION_UP -> {
-                    view.performClick()
-                }
+                return true
             }
-            return true
+            return false
         }
         val onDragListener = fun(view: View, dragEvent: DragEvent): Boolean {
-            if (dragEvent.localState == view) {
-                Log.i("MainActivity", "Rejected")
-                return false
+            if (Black && turnColor == Color.BLACK || !Black && turnColor == Color.WHITE) {
+                if (dragEvent.localState == view) {
+                    Log.i("MainActivity", "Rejected")
+                    return false
+                }
+                when (dragEvent.action) {
+                    DragEvent.ACTION_DRAG_ENTERED -> {
+
+                    }
+
+                    DragEvent.ACTION_DRAG_EXITED -> {
+
+                    }
+
+                    DragEvent.ACTION_DROP -> {
+                        Log.i("MainActivity", "Dropped")
+                        onCellSelected(view.tag as Pair<Int, Int>)
+                    }
+                }
+                return true
             }
-            when (dragEvent.action) {
-                DragEvent.ACTION_DRAG_ENTERED -> {
 
-                }
-
-                DragEvent.ACTION_DRAG_EXITED -> {
-
-                }
-
-                DragEvent.ACTION_DROP -> {
-                    Log.i("MainActivity", "Dropped")
-                    onCellSelected(view.tag as Pair<Int, Int>)
-                }
-            }
-            return true
+            return false
         }
         for ((i, row) in this.viewGrid.withIndex()) {
             for ((j, cell) in row.withIndex()) {
@@ -263,6 +270,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
 
     private fun update() {
         MP?.start()
+        glow()
 
         toClear?.setBackgroundResource(empty)
         var turnList = whitePieces
@@ -316,6 +324,28 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
                 parentRef.ShowDialog(5)
             }
             Log.i("Main", "CHECKMATE")
+        }
+    }
+
+    private fun glow() {
+        if (Black && turnColor == Color.BLACK || !Black && turnColor == Color.WHITE) {
+            parentRef.findViewById<TextView>(R.id.opponentName)
+                .setShadowLayer(0f,0f,0f,android.R.color.transparent)
+            parentRef.findViewById<TextView>(R.id.opponentName)
+                .elevation = 0F
+            parentRef.findViewById<TextView>(R.id.myName)
+                .setShadowLayer(30F, 0.0F, 0.0F, R.color.glow_color)
+            parentRef.findViewById<TextView>(R.id.myName)
+                .elevation = 24F
+        }else{
+            parentRef.findViewById<TextView>(R.id.myName)
+                .setShadowLayer(0F, 0.0F, 0.0F, android.R.color.transparent)
+            parentRef.findViewById<TextView>(R.id.myName)
+                .elevation = 0F
+            parentRef.findViewById<TextView>(R.id.opponentName)
+                .setShadowLayer(30f,0f,0f,R.color.glow_color)
+            parentRef.findViewById<TextView>(R.id.opponentName)
+                .elevation = 24F
         }
     }
 }
