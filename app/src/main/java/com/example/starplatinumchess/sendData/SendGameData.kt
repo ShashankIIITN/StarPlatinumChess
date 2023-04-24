@@ -17,13 +17,13 @@ import com.google.gson.Gson
 
 class SendGameData {
     //    private lateinit var connectionsClient: ConnectionsClient
-    fun sendGameChoice( iprev: Int, jprev: Int, i: Int, j: Int, type:Int) {
+    fun sendGameChoice( iprev: Int, jprev: Int, i: Int, j: Int, choice: Int, type:Int) {
 
         Log.i("Main", "send game choice: $iprev, $jprev, $i, $j")
         val gson = Gson()
         try {
 //            val gameCh = gson.toJson(gameChoice(selected, i, j))
-            val gameCh = gson.toJson(gameChoice(iprev, jprev, i, j, type))
+            val gameCh = gson.toJson(gameChoice(iprev, jprev, i, j, choice, type))
 
 
             connectionsClient.sendPayload(

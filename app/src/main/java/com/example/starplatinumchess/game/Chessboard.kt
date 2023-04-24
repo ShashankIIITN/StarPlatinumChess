@@ -1,5 +1,7 @@
 package com.example.starplatinumchess.game
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.util.Log
 import android.view.DragEvent
 import android.view.MotionEvent
@@ -116,6 +118,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
         }
         for ((i, row) in this.viewGrid.withIndex()) {
             for ((j, cell) in row.withIndex()) {
+                cell.setBackgroundResource(empty)
                 cell.tag = Pair(i, j)
 //                cell.setOnClickListener(onClickListener)
                 cell.setOnTouchListener(onTouchListener)
@@ -179,13 +182,38 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
         val jprev = selected!!.j;
         val function = selected!!.validMoves[Pair(i, j)] ?: return
         function(board, viewGrid, selected!!, i, j)
+        if ((i == 0 || i == 7) && selected is Pawn) {
+            val dialog = AlertDialog.Builder(parentRef)
+                .setItems(arrayOf("Queen", "Knight", "Rook", "Bishop"))
+                { _: DialogInterface, choice: Int ->
+                    var piece : ChessPiece = board[i][j]!!
+                    piece.alive = false
+                    when (choice) {
+                        0 -> piece = Queen(piece.color)
+                        1 -> piece = Knight(piece.color)
+                        2 -> piece = Rook(piece.color)
+                        3 -> piece = Bishop(piece.color)
+                    }
+                    board[i][j] = piece
+                    piece.i = i
+                    piece.j = j
+                    viewGrid[i][j].setImageResource(piece.res)
+                    if (piece.color == Color.WHITE)
+                        whitePieces.add(piece)
+                    else
+                        blackPieces.add(piece)
+                }
+            dialog.create().show()
+            sendData.sendGameChoice(iprev, jprev, i, j, -1, 0)
+        } else {
+            sendData.sendGameChoice(iprev, jprev, i, j, -1, 0)
+        }
         turnColor = if (turnColor == Color.WHITE) Color.BLACK else Color.WHITE
-        sendData.sendGameChoice(iprev, jprev, i, j, 0)
         update()
         Log.i("Main", "new pos: ${selected!!.i}, ${selected!!.j}")
     }
 
-    fun makeMove(iprev: Int, jprev: Int, i: Int, j: Int) {
+    fun makeMove(iprev: Int, jprev: Int, i: Int, j: Int, choice: Int) {
         if (board[iprev][jprev] != null &&
             board[iprev][jprev]!!.color == turnColor &&
             board[iprev][jprev]!!.validMoves.isNotEmpty()
@@ -198,6 +226,24 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
         //Log.i("Main", "Move from (${selected!!.i}, ${selected!!.j}) -> ($i, $j)")
         val function = selected!!.validMoves[Pair(i, j)] ?: return
         function(board, viewGrid, selected!!, i, j)
+        if (choice != -1) {
+            var piece : ChessPiece = board[i][j]!!
+            piece.alive = false
+            when (choice) {
+                0 -> piece = Queen(piece.color)
+                1 -> piece = Knight(piece.color)
+                2 -> piece = Rook(piece.color)
+                3 -> piece = Bishop(piece.color)
+            }
+            board[i][j] = piece
+            piece.i = i
+            piece.j = j
+            viewGrid[i][j].setImageResource(piece.res)
+            if (piece.color == Color.WHITE)
+                whitePieces.add(piece)
+            else
+                blackPieces.add(piece)
+        }
         turnColor = if (turnColor == Color.WHITE) Color.BLACK else Color.WHITE
         update()
         Log.i("Main", "new pos: ${selected!!.i}, ${selected!!.j}")
