@@ -32,7 +32,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
     private val whiteKing: King
     private val sendData = SendGameData()
 
-    private var MP : MediaPlayer? = null
+    private var MP: MediaPlayer? = null
     private val control = HashSet<Pair<Int, Int>>()
     private val checkList = ArrayList<ChessPiece>()
 
@@ -80,7 +80,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
             )
         )
         MP = MediaPlayer.create(cntxt, R.raw.chess_sound)
-        MP?.setOnPreparedListener{
+        MP?.setOnPreparedListener {
             Log.i("Listener", "Ready TO Go!!")
         }
         MP?.isLooping = false
@@ -194,7 +194,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
             val dialog = AlertDialog.Builder(parentRef)
                 .setItems(arrayOf("Queen", "Knight", "Rook", "Bishop"))
                 { _: DialogInterface, choice: Int ->
-                    var piece : ChessPiece = board[i][j]!!
+                    var piece: ChessPiece = board[i][j]!!
                     piece.alive = false
                     when (choice) {
                         0 -> piece = Queen(piece.color)
@@ -210,9 +210,9 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
                         whitePieces.add(piece)
                     else
                         blackPieces.add(piece)
+                    sendData.sendGameChoice(iprev, jprev, i, j, choice, 0)
                 }
             dialog.create().show()
-            sendData.sendGameChoice(iprev, jprev, i, j, -1, 0)
         } else {
             sendData.sendGameChoice(iprev, jprev, i, j, -1, 0)
         }
@@ -235,7 +235,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
         val function = selected!!.validMoves[Pair(i, j)] ?: return
         function(board, viewGrid, selected!!, i, j)
         if (choice != -1) {
-            var piece : ChessPiece = board[i][j]!!
+            var piece: ChessPiece = board[i][j]!!
             piece.alive = false
             when (choice) {
                 0 -> piece = Queen(piece.color)
@@ -310,9 +310,9 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
             }
         }
         if (over) {
-            if (!Black.xor(  turnColor == Color.BLACK)) {
-                    parentRef.ShowDialog(4)
-            }else{
+            if (!Black.xor(turnColor == Color.BLACK)) {
+                parentRef.ShowDialog(4)
+            } else {
                 parentRef.ShowDialog(5)
             }
             Log.i("Main", "CHECKMATE")
