@@ -49,6 +49,7 @@ class MainMenu : AppCompatActivity() {
         pro = findViewById(R.id.profile)
         Initial()
 
+
         Progressbar = findViewById(R.id.FetchPBar)
 
         Progressbar.visibility = View.INVISIBLE
@@ -131,8 +132,9 @@ class MainMenu : AppCompatActivity() {
                 .setMessage("Are you sure you want to logout?")
                 .setCancelable(true)
                 .setPositiveButton("YES") { dialogInterface, it ->
+                    auth.signOut()
                     finish()
-                    //here enter code for logging out
+
 
                 }
                 .setNegativeButton("NO") { dialogInterface, it ->
@@ -149,6 +151,10 @@ class MainMenu : AppCompatActivity() {
 
         pro.setOnClickListener {
             val intent = Intent(this, Profile::class.java)
+            intent.putExtra("totalMatches", totalMatches)
+            intent.putExtra("MatchesWon", MatchesWon)
+            intent.putExtra("userName", usrName)
+            intent.putExtra("Points", points)
             startActivity(intent)
         }
 

@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -78,11 +79,24 @@ class LoginActivity : AppCompatActivity() {
                 Login()
             }
         }
+        findViewById<TextView>(R.id.Reg_New).setOnClickListener{
+            var intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onStart() {
         super.onStart()
         ProgressBar.visibility = View.INVISIBLE
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            Toast.makeText(this@LoginActivity, "Already Logged in $currentUser", Toast.LENGTH_SHORT)
+                .show()
+            intent = Intent(this, MainMenu::class.java)
+            intent.putExtra("User", "Myname");
+            intent.putExtra("Pts", 150);
+            startActivity(intent)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

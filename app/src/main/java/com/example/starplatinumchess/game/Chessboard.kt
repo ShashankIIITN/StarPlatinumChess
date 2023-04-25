@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.starplatinumchess.Array2D
@@ -31,6 +33,7 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
     private val blackKing: King
     private val whiteKing: King
     private val sendData = SendGameData()
+    private lateinit var anim : Animation
 
     private var MP: MediaPlayer? = null
     private val control = HashSet<Pair<Int, Int>>()
@@ -87,6 +90,10 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
 //        val onClickListener = fun (view : View) {
 //            val pos = view.tag as Pair<Int, Int>
 //            onCellSelected(pos)
+        anim = AlphaAnimation(0.0f, 1.0f);
+        anim.setDuration(500); // You can adjust the duration to suit your needs
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setRepeatMode(Animation.REVERSE);
 //        }
         val onTouchListener = fun(view: View, motionEvent: MotionEvent): Boolean {
             if (Black && turnColor == Color.BLACK || !Black && turnColor == Color.WHITE) {
@@ -329,23 +336,15 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
 
     private fun glow() {
         if (Black && turnColor == Color.BLACK || !Black && turnColor == Color.WHITE) {
-            parentRef.findViewById<TextView>(R.id.opponentName)
-                .setShadowLayer(0f,0f,0f,android.R.color.transparent)
-            parentRef.findViewById<TextView>(R.id.opponentName)
-                .elevation = 0F
-            parentRef.findViewById<TextView>(R.id.myName)
-                .setShadowLayer(30F, 0.0F, 0.0F, R.color.glow_color)
-            parentRef.findViewById<TextView>(R.id.myName)
-                .elevation = 24F
+            parentRef.findViewById<TextView>(R.id.opponentName).setBackgroundResource(empty)
+            parentRef.findViewById<TextView>(R.id.opponentName).clearAnimation()
+            parentRef.findViewById<TextView>(R.id.myName).setBackgroundResource(R.drawable.glow)
+            parentRef.findViewById<TextView>(R.id.myName).startAnimation(anim)
         }else{
-            parentRef.findViewById<TextView>(R.id.myName)
-                .setShadowLayer(0F, 0.0F, 0.0F, android.R.color.transparent)
-            parentRef.findViewById<TextView>(R.id.myName)
-                .elevation = 0F
-            parentRef.findViewById<TextView>(R.id.opponentName)
-                .setShadowLayer(30f,0f,0f,R.color.glow_color)
-            parentRef.findViewById<TextView>(R.id.opponentName)
-                .elevation = 24F
+            parentRef.findViewById<TextView>(R.id.myName).setBackgroundResource(empty)
+            parentRef.findViewById<TextView>(R.id.myName).clearAnimation()
+            parentRef.findViewById<TextView>(R.id.opponentName).setBackgroundResource(R.drawable.glow)
+            parentRef.findViewById<TextView>(R.id.opponentName).startAnimation(anim)
         }
     }
 }

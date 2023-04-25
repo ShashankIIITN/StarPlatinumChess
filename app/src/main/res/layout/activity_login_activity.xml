@@ -23,7 +23,7 @@
 
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/title_menu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:shadowColor="@color/glow_color"
@@ -38,8 +38,8 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="390dp"
-        android:layout_height="277dp"
+        android:layout_width="353dp"
+        android:layout_height="281dp"
         android:layout_margin="10sp"
         android:layout_marginTop="96dp"
         android:orientation="vertical"
@@ -108,6 +108,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/Reg_New"
             android:layout_width="wrap_content"
             android:layout_height="30sp"
             android:layout_gravity="center"
