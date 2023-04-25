@@ -17,6 +17,7 @@ import com.example.starplatinumchess.MultMainActivity
 import com.example.starplatinumchess.R
 import com.example.starplatinumchess.empty
 import com.example.starplatinumchess.game.ChessPiece.Color
+import com.example.starplatinumchess.matchEnded
 import com.example.starplatinumchess.sendData.SendGameData
 import java.util.LinkedList
 
@@ -327,8 +328,18 @@ class Chessboard(viewGrid: Array2D<ImageView?>, val parentRef: MultMainActivity)
         if (over) {
             if (!Black.xor(turnColor == Color.BLACK)) {
                 parentRef.ShowDialog(4)
+                matchEnded = true
+                parentRef.findViewById<TextView>(R.id.myName).setBackgroundResource(empty)
+                parentRef.findViewById<TextView>(R.id.opponentName).setBackgroundResource(empty)
+                parentRef.findViewById<TextView>(R.id.myName).clearAnimation()
+                parentRef.findViewById<TextView>(R.id.opponentName).clearAnimation()
             } else {
                 parentRef.ShowDialog(5)
+                matchEnded = true
+                parentRef.findViewById<TextView>(R.id.myName).setBackgroundResource(empty)
+                parentRef.findViewById<TextView>(R.id.opponentName).setBackgroundResource(empty)
+                parentRef.findViewById<TextView>(R.id.myName).clearAnimation()
+                parentRef.findViewById<TextView>(R.id.opponentName).clearAnimation()
             }
             Log.i("Main", "CHECKMATE")
         }

@@ -63,6 +63,7 @@ var opponentName: String? = null
 
 //var opponentChoice: GameChoice? = null
 lateinit var connectionsClient: ConnectionsClient
+var matchEnded = true
 lateinit var cntxt: Context
 lateinit var chessboard: Chessboard
 private var totalMatches: Int = 0
@@ -145,7 +146,7 @@ class MultMainActivity : AppCompatActivity() {
                         findViewById<Button>(R.id.findOpponent).visibility = View.VISIBLE
                         binding.status.visibility = View.GONE
                     }
-                } else {
+                } else if (!matchEnded){
                     val builder = AlertDialog.Builder(this@MultMainActivity)
                     builder.setTitle("Disconnect!!")
                     builder.setMessage("Are you sure you want to disconnect, you will lose the match !! ")
@@ -170,6 +171,32 @@ class MultMainActivity : AppCompatActivity() {
                     val alertDialog: AlertDialog = builder.create()
                     alertDialog.setCancelable(false)
                     alertDialog.show()
+
+                }else{
+                    val builder = AlertDialog.Builder(this@MultMainActivity)
+                    builder.setTitle("Disconnect!!")
+                    builder.setMessage("Are you sure you want to disconnect, you are connected to $opponentName !! ")
+                    builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+                    builder.setPositiveButton("Yes") { _, _ ->
+
+                        connectionsClient.stopAdvertising()
+                        connectionsClient.stopDiscovery()
+                        opponentEndpointId?.let { connectionsClient.disconnectFromEndpoint(it) }
+                        resetGame(0)
+                        Toast.makeText(
+                            applicationContext, "Disconnected Successfully", Toast.LENGTH_LONG
+                        ).show()
+
+                    }
+                    builder.setNegativeButton("No") { dialogInterface, which ->
+//                        Toast.makeText(applicationContext, "clicked No", Toast.LENGTH_LONG).show()
+                        dialogInterface.dismiss()
+                    }
+                    val alertDialog: AlertDialog = builder.create()
+                    alertDialog.setCancelable(false)
+                    alertDialog.show()
+
                 }
             }
         })
@@ -781,6 +808,7 @@ class MultMainActivity : AppCompatActivity() {
         binding.opponentName.visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.conLayout_1).visibility = View.VISIBLE
         findViewById<CoordinatorLayout>(R.id.coorlay).visibility = View.VISIBLE
+        matchEnded = false
         if (first) {
             tempGrid = Array2D<ImageView?>(8) {
                 Array(8) { null }

@@ -33,21 +33,24 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var etPass: EditText
     private lateinit var lginBtn: Button
 
-    fun validate(): Boolean
-    {
-        val username= findViewById<EditText>(R.id.editTextUsrName)
-        val passw =findViewById<EditText>(R.id.editTextPass)
+    fun validate(): Boolean {
+        val username = findViewById<EditText>(R.id.editTextUsrName)
+        val passw = findViewById<EditText>(R.id.editTextPass)
 
         val uname = username.text.toString()
         val pass = passw.text.toString()
 
-        var user=false
-        var pas =false
+        var user = false
+        var pas = false
 
-        username.error= if (uname.isEmpty())"Username cannot be empty"
-        else {user = true; null}
+        username.error = if (uname.isEmpty()) "Username cannot be empty"
+        else {
+            user = true; null
+        }
 
-        passw.error=if (pass.isEmpty())"Password cannot be empty" else{pas=true ; null}
+        passw.error = if (pass.isEmpty()) "Password cannot be empty" else {
+            pas = true; null
+        }
 
         return (user && pas)
     }
@@ -67,19 +70,19 @@ class LoginActivity : AppCompatActivity() {
         lginBtn.setOnClickListener {
             Email = etEmail.text.toString()
             Pass = etPass.text.toString()
-            etEmail.focusable = View.NOT_FOCUSABLE
-            etPass.focusable = View.NOT_FOCUSABLE
             lginBtn.isEnabled = false
             if (TextUtils.isEmpty(Email)) {
                 Toast.makeText(this, "Invalid Email", Toast.LENGTH_SHORT).show()
+                lginBtn.isEnabled = true
                 Log.e("Email", Email)
             } else if (TextUtils.isEmpty(Pass)) {
                 Toast.makeText(this, "Invalid Password", Toast.LENGTH_SHORT).show()
+                lginBtn.isEnabled = true
             } else {
                 Login()
             }
         }
-        findViewById<TextView>(R.id.Reg_New).setOnClickListener{
+        findViewById<TextView>(R.id.Reg_New).setOnClickListener {
             var intent = Intent(this@LoginActivity, RegisterActivity::class.java)
             startActivity(intent)
         }
@@ -139,10 +142,10 @@ class LoginActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-                ProgressBar.visibility = View.INVISIBLE
-                etEmail.focusable = View.FOCUSABLE
-                etPass.focusable = View.FOCUSABLE
-                lginBtn.isEnabled = true
             }
+        ProgressBar.visibility = View.INVISIBLE
+        etEmail.focusable = View.FOCUSABLE
+        etPass.focusable = View.FOCUSABLE
+        lginBtn.isEnabled = true
     }
 }
